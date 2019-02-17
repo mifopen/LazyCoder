@@ -11,10 +11,10 @@ namespace LazyCoder.Runner.Writer
             {
                 case TsExportType.None:
                     return;
-                case TsExportType.Export:
+                case TsExportType.Named:
                     keyboard.Type("export ");
                     return;
-                case TsExportType.ExportDefault:
+                case TsExportType.Default:
                     keyboard.Type("export default ");
                     return;
                 default:

@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Mono.Cecil;
 
 namespace LazyCoder.Runner
 {
@@ -13,13 +12,7 @@ namespace LazyCoder.Runner
         {
             var dllPath =
                 Path.GetFullPath("../../tests/LazyCoder.TestDll/bin/Debug/netstandard2.0/LazyCoder.TestDll.dll");
-            var folder = Path.GetDirectoryName(dllPath);
-            var readerParameters = new ReaderParameters
-                                   {
-                                       ReadingMode = ReadingMode.Deferred,
-                                       AssemblyResolver = new AssemblyResolver(folder)
-                                   };
-            var moduleDefinition = ModuleDefinition.ReadModule(dllPath, readerParameters);
+            var moduleDefinition = new AssemblyReader().Read(dllPath);
             var coders = Assembly.LoadFile(dllPath)
                                  .GetTypes()
                                  .Where(x => x.GetInterfaces()

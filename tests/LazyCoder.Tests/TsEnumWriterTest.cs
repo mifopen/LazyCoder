@@ -10,7 +10,7 @@ namespace LazyCoder.Tests
         {
             var tsEnum = new TsEnum
                          {
-                             ExportType = TsExportType.ExportDefault,
+                             ExportType = TsExportType.Default,
                              Name = "SomeEnum",
                              Values = new[]
                                       {
@@ -29,8 +29,7 @@ namespace LazyCoder.Tests
             tsEnum.ShouldBeTranslatedTo("export default SomeEnum {",
                                         "    FirstValue = 0,",
                                         "    SecondValue = 1,",
-                                        "}",
-                                        "");
+                                        "}");
         }
     }
 }

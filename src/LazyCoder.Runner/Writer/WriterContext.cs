@@ -32,7 +32,7 @@ namespace LazyCoder.Runner.Writer
 
         public void Write<T>(T tsThing)
         {
-            var writer = TsWriterFactory.CreateFor<T>();
+            var writer = TsWriterFactory.CreateFor(tsThing.GetType());
             writer.Write(this, tsThing);
         }
 
@@ -54,7 +54,7 @@ namespace LazyCoder.Runner.Writer
 
         public string GetResult()
         {
-            return sb.ToString();
+            return sb.ToString().Trim();
         }
     }
 }
