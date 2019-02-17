@@ -1,11 +1,12 @@
+using System;
 using System.Collections.Generic;
 
 namespace LazyCoder.Typescript
 {
     public class TsEnum : ITsDeclaration
     {
-        public TsExportType ExportType { get; set; }
-        public string Name { get; set; }
-        public IEnumerable<TsEnumValue> Values { get; set; }
+        public TsExportKind ExportKind { get; set; }
+        public TsName Name { get; set; }
+        public IEnumerable<TsEnumValue> Values { get; set; } = Array.Empty<TsEnumValue>();
     }
 }

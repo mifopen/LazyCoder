@@ -3,22 +3,22 @@ using LazyCoder.Typescript;
 
 namespace LazyCoder.Runner.Writer
 {
-    public class TsExportTypeWriter : ITsWriter<TsExportType>
+    public class TsExportTypeWriter : ITsWriter<TsExportKind>
     {
-        public void Write(IKeyboard keyboard, TsExportType tsExportType)
+        public void Write(IKeyboard keyboard, TsExportKind tsExportKind)
         {
-            switch (tsExportType)
+            switch (tsExportKind)
             {
-                case TsExportType.None:
+                case TsExportKind.None:
                     return;
-                case TsExportType.Named:
+                case TsExportKind.Named:
                     keyboard.Type("export ");
                     return;
-                case TsExportType.Default:
+                case TsExportKind.Default:
                     keyboard.Type("export default ");
                     return;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(tsExportType), tsExportType, null);
+                    throw new ArgumentOutOfRangeException(nameof(tsExportKind), tsExportKind, null);
             }
         }
     }

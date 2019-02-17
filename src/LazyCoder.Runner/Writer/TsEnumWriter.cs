@@ -7,8 +7,9 @@ namespace LazyCoder.Runner.Writer
     {
         public void Write(IKeyboard keyboard, TsEnum tsEnum)
         {
-            keyboard.Write(tsEnum.ExportType);
-            keyboard.Type(tsEnum.Name, " ");
+            keyboard.Write(tsEnum.ExportKind);
+            keyboard.Write(tsEnum.Name);
+            keyboard.Type(" ");
             using (keyboard.Block())
             {
                 foreach (var tsEnumValue in tsEnum.Values)

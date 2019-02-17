@@ -20,8 +20,11 @@ namespace LazyCoder.TestDll
                                                            {
                                                                new TsEnum
                                                                {
-                                                                   Name = x.Name,
-                                                                   ExportType = TsExportType.Named,
+                                                                   Name = new TsName
+                                                                          {
+                                                                              Value = x.Name
+                                                                          },
+                                                                   ExportKind = TsExportKind.Named,
                                                                    Values = x.Fields
                                                                              .Where(f => f.Name != "value__")
                                                                              .Select(y => new TsEnumNumberValue

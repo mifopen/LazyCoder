@@ -1,6 +1,6 @@
 namespace LazyCoder.Typescript
 {
-    public enum TsExportType
+    public enum TsExportKind
     {
         None,
         Named,
