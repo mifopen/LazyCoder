@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LazyCoder", "src\LazyCoder\LazyCoder.csproj", "{CE8B9F34-144F-4500-8076-0FBC065F2AD8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LazyCoder.TestDll", "tests\LazyCoder.TestDll\LazyCoder.TestDll.csproj", "{9F9D8B6D-232D-4A04-B352-2471C604F346}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LazyCoder.Runner", "src\LazyCoder.Runner\LazyCoder.Runner.csproj", "{03C65D73-E6DA-4CE5-8461-0F03EB277ED7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "build", "build\build.csproj", "{2F30D2B1-CC4B-44F3-A40C-983779CFAA73}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2F30D2B1-CC4B-44F3-A40C-983779CFAA73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F30D2B1-CC4B-44F3-A40C-983779CFAA73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE8B9F34-144F-4500-8076-0FBC065F2AD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE8B9F34-144F-4500-8076-0FBC065F2AD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE8B9F34-144F-4500-8076-0FBC065F2AD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE8B9F34-144F-4500-8076-0FBC065F2AD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F9D8B6D-232D-4A04-B352-2471C604F346}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F9D8B6D-232D-4A04-B352-2471C604F346}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F9D8B6D-232D-4A04-B352-2471C604F346}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F9D8B6D-232D-4A04-B352-2471C604F346}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03C65D73-E6DA-4CE5-8461-0F03EB277ED7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03C65D73-E6DA-4CE5-8461-0F03EB277ED7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03C65D73-E6DA-4CE5-8461-0F03EB277ED7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03C65D73-E6DA-4CE5-8461-0F03EB277ED7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
