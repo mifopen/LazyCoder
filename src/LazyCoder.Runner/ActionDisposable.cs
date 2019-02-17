@@ -13,7 +13,7 @@ namespace LazyCoder.Runner
 
         public void Dispose()
         {
-            this.action();
+            action();
         }
     }
 }
