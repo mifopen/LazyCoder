@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace LazyCoder.Typescript
 {
-    public class TsNamespace
+    public class TsNamespace : ITsDeclaration
     {
         public string Name { get; set; }
         public TsExportKind ExportKind { get; set; }

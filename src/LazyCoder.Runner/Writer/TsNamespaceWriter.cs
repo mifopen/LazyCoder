@@ -5,10 +5,11 @@ namespace LazyCoder.Runner.Writer
 {
     public class TsNamespaceWriter : ITsWriter<TsNamespace>
     {
-        public void Write(IKeyboard keyboard, TsNamespace tsNamespace)
+        public void Write(IKeyboard keyboard,
+                          TsNamespace tsNamespace)
         {
-            keyboard.Write(tsNamespace.ExportKind);
-            keyboard.IndentAndType("namespace ", tsNamespace.Name, " ");
+            keyboard.Write(tsNamespace.ExportKind)
+                    .Type("namespace ", tsNamespace.Name, " ");
             using (keyboard.Block())
             {
                 var declarations = tsNamespace.Declarations.ToArray();

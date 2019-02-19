@@ -29,7 +29,7 @@ namespace LazyCoder.Tests
                                           }
                                       }
                          };
-            tsEnum.ShouldBeTranslatedTo("export default SomeEnum {",
+            tsEnum.ShouldBeTranslatedTo("export default enum SomeEnum {",
                                         "    FirstValue = 0,",
                                         "    SecondValue = 1,",
                                         "}");

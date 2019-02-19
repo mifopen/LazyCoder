@@ -6,18 +6,19 @@ namespace LazyCoder.Runner.Writer
 {
     public class TsFunctionWriter : ITsWriter<TsFunction>
     {
-        public void Write(IKeyboard keyboard, TsFunction tsFunction)
+        public void Write(IKeyboard keyboard,
+                          TsFunction tsFunction)
         {
-            keyboard.Write(tsFunction.ExportKind);
-            keyboard.Type("function ");
-            keyboard.Write(tsFunction.Name);
-            keyboard.Type("(");
+            keyboard.Write(tsFunction.ExportKind)
+                    .Type("function ")
+                    .Write(tsFunction.Name)
+                    .Type("(");
             var parameters = tsFunction.Parameters.ToArray();
             for (var i = 0; i < parameters.Length; i++)
             {
                 var parameter = parameters[i];
-                keyboard.Type(parameter.Name, ": ");
-                keyboard.Write(parameter.Type);
+                keyboard.Type(parameter.Name, ": ")
+                        .Write(parameter.Type);
                 if (i != parameters.Length - 1)
                     keyboard.Type(", ");
             }
@@ -25,8 +26,8 @@ namespace LazyCoder.Runner.Writer
             keyboard.Type(")");
             if (tsFunction.ReturnType != null)
             {
-                keyboard.Type(": ");
-                keyboard.Write(tsFunction.ReturnType);
+                keyboard.Type(": ")
+                        .Write(tsFunction.ReturnType);
             }
 
             keyboard.Type(" ");
@@ -35,8 +36,8 @@ namespace LazyCoder.Runner.Writer
                 var bodyLines = tsFunction.Body.Split(Environment.NewLine);
                 foreach (var bodyLine in bodyLines)
                 {
-                    keyboard.TypeIndent();
-                    keyboard.TypeLine(bodyLine);
+                    using (keyboard.Line())
+                        keyboard.Type(bodyLine);
                 }
             }
         }

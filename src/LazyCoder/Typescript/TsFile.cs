@@ -8,7 +8,6 @@ namespace LazyCoder.Typescript
         public string Name { get; set; }
         public string Path { get; set; }
         public IEnumerable<TsImport> Imports { get; set; } = Array.Empty<TsImport>();
-        public IEnumerable<TsNamespace> Namespaces { get; set; } = Array.Empty<TsNamespace>();
         public IEnumerable<ITsDeclaration> Declarations { get; set; } = Array.Empty<ITsDeclaration>();
     }
 }

@@ -5,29 +5,34 @@ namespace LazyCoder.Runner.Writer
 {
     public class TsEnumWriter : ITsWriter<TsEnum>
     {
-        public void Write(IKeyboard keyboard, TsEnum tsEnum)
+        public void Write(IKeyboard keyboard,
+                          TsEnum tsEnum)
         {
-            keyboard.Write(tsEnum.ExportKind);
-            keyboard.Write(tsEnum.Name);
-            keyboard.Type(" ");
+            keyboard.Write(tsEnum.ExportKind)
+                    .Type("enum ")
+                    .Write(tsEnum.Name)
+                    .Type(" ");
             using (keyboard.Block())
             {
                 foreach (var tsEnumValue in tsEnum.Values)
                 {
-                    keyboard.IndentAndType(tsEnumValue.Name, " = ");
-                    switch (tsEnumValue)
+                    using (keyboard.Line())
                     {
-                        case TsEnumNumberValue numberValue:
-                            keyboard.Write(numberValue.Value);
-                            break;
-                        case TsEnumStringValue stringValue:
-                            keyboard.Write(stringValue.Value);
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(tsEnumValue), tsEnumValue, null);
-                    }
+                        keyboard.Type(tsEnumValue.Name, " = ");
+                        switch (tsEnumValue)
+                        {
+                            case TsEnumNumberValue numberValue:
+                                keyboard.Write(numberValue.Value);
+                                break;
+                            case TsEnumStringValue stringValue:
+                                keyboard.Write(stringValue.Value);
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException(nameof(tsEnumValue), tsEnumValue, null);
+                        }
 
-                    keyboard.TypeLine(",");
+                        keyboard.Type(",");
+                    }
                 }
             }
         }

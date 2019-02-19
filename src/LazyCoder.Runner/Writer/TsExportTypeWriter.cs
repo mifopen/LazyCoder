@@ -7,6 +7,7 @@ namespace LazyCoder.Runner.Writer
     {
         public void Write(IKeyboard keyboard, TsExportKind tsExportKind)
         {
+            keyboard.Indent();
             switch (tsExportKind)
             {
                 case TsExportKind.None:

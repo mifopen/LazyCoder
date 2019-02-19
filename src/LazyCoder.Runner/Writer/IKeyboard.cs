@@ -4,14 +4,11 @@ namespace LazyCoder.Runner.Writer
 {
     public interface IKeyboard
     {
-        void Type(params string[] words);
-        void TypeLine(string line);
-        void IndentAndType(params string[] words);
-        void IndentAndTypeLine(string line);
-        void NewLine();
-        IDisposable Indent();
-        void Write<T>(T tsThing);
+        IKeyboard Type(params string[] words);
+        IKeyboard Write<T>(T tsThing);
+        IDisposable Line();
         IDisposable Block();
-        void TypeIndent();
+        IKeyboard NewLine();
+        IKeyboard Indent();
     }
 }

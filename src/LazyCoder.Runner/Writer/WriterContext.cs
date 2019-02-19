@@ -8,60 +8,52 @@ namespace LazyCoder.Runner.Writer
         private readonly StringBuilder sb = new StringBuilder();
         private int indentLevel;
 
-        public void Type(params string[] words)
+        public IKeyboard Type(params string[] words)
         {
             sb.AppendJoin("", words);
+            return this;
         }
 
-        public void NewLine()
+        public IKeyboard NewLine()
         {
             sb.AppendLine();
+            return this;
         }
 
-        public void TypeLine(string line)
-        {
-            Type(line);
-            NewLine();
-        }
-
-        public void IndentAndType(params string[] words)
-        {
-            TypeIndent();
-            Type(words);
-        }
-
-        public void IndentAndTypeLine(string line)
-        {
-            TypeIndent();
-            TypeLine(line);
-        }
-
-        public IDisposable Indent()
+        private IDisposable IncreaseIndent()
         {
             indentLevel++;
             return new ActionDisposable(() => indentLevel--);
         }
 
-        public void Write<T>(T tsThing)
+        public IKeyboard Write<T>(T tsThing)
         {
             var writer = TsWriterFactory.CreateFor(tsThing.GetType());
             writer.Write(this, tsThing);
+            return this;
         }
 
         public IDisposable Block()
         {
-            TypeLine("{");
-            var unindent = Indent();
+            Type("{").NewLine();
+            var unindent = IncreaseIndent();
             return new ActionDisposable(() =>
                                         {
                                             unindent.Dispose();
-                                            TypeLine("}");
+                                            Indent().Type("}").NewLine();
                                         });
         }
 
-        public void TypeIndent()
+        public IDisposable Line()
+        {
+            Indent();
+            return new ActionDisposable(() => NewLine());
+        }
+
+        public IKeyboard Indent()
         {
             sb.Append(new string(' ', indentLevel * 4));
+            return this;
         }
 
         public string GetResult()

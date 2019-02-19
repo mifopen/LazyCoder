@@ -22,7 +22,7 @@ namespace LazyCoder.Tests
             {
                 foreach (var tsDeclaration in tsFile.Declarations)
                 {
-                    tsDeclaration.ShouldBeTranslatedTo("export SomeEnum {",
+                    tsDeclaration.ShouldBeTranslatedTo("export enum SomeEnum {",
                                                        "    FirstValue = 0,",
                                                        "    SecondValue = 1,",
                                                        "    ThirdValue = 2,",
