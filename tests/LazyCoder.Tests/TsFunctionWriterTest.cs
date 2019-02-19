@@ -11,21 +11,21 @@ namespace LazyCoder.Tests
         {
             var tsName = new TsFunction
                          {
-                             Name = new TsName {Value = "SomeFunction"},
+                             Name = new TsName { Value = "SomeFunction" },
                              Parameters = new[]
                                           {
                                               new TsFunctionParameter
                                               {
                                                   Name = "firstParameter",
-                                                  Type = new TsName {Value = "FirstType"}
+                                                  Type = new TsType { Name = "FirstType" }
                                               },
                                               new TsFunctionParameter
                                               {
                                                   Name = "secondParameter",
-                                                  Type = new TsName {Value = "SecondType"}
+                                                  Type = new TsType { Name = "SecondType" }
                                               }
                                           },
-                             ReturnType = new TsName {Value = "ReturnType"},
+                             ReturnType = new TsType { Name = "ReturnType" },
                              Body = $"// not implemented{Environment.NewLine}//todo do"
                          };
             tsName.ShouldBeTranslatedTo("function SomeFunction(firstParameter: FirstType, secondParameter: SecondType): ReturnType {",
