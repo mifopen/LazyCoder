@@ -1,30 +1,25 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
+﻿using System.CommandLine;
+using System.CommandLine.Builder;
+using System.CommandLine.Invocation;
+using System.Threading.Tasks;
 
 namespace LazyCoder.Runner
 {
     class Program
     {
-        static void Main(string[] args)
+        private static async Task<int> Main(string[] args)
         {
-            var dllPath =
-                Path.GetFullPath("../../tests/LazyCoder.TestDll/bin/Debug/netstandard2.0/LazyCoder.TestDll.dll");
-            var moduleDefinition = new AssemblyReader().Read(dllPath);
-            var coders = Assembly.LoadFile(dllPath)
-                                 .GetTypes()
-                                 .Where(x => x.GetInterfaces()
-                                              .Any(y => y == typeof(ICoder)))
-                                 .ToArray();
-            foreach (var coderType in coders)
-            {
-                Console.Out.WriteLine("coder " + coderType.Name);
-                var ctor = (Func<ICoder>)Expression.Lambda(Expression.New(coderType)).Compile();
-                var coder = ctor();
-                var tsFiles = coder.Rewrite(moduleDefinition);
-            }
+            var parser = new CommandLineBuilder(new Command("lazy", handler: CommandHandler.Create(typeof(Runner).GetMethod(nameof(Runner.Run)))))
+                         .AddOption(new Option(new[] { "-dll" },
+                                               argument: new Argument<string>("../../tests/LazyCoder.TestDll/bin/Debug/netstandard2.0/LazyCoder.TestDll.dll")
+                                                         { Arity = ArgumentArity.ExactlyOne }))
+                         .AddOption(new Option(new[] { "-o", "-output", "-outputDirectory" },
+                                               argument: new Argument<string>("./output")
+                                                         { Arity = ArgumentArity.ExactlyOne }))
+                         .UseExceptionHandler()
+                         .Build();
+
+            return await parser.InvokeAsync(args).ConfigureAwait(false);
         }
     }
 }

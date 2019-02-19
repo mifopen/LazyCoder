@@ -15,7 +15,7 @@ namespace LazyCoder.TestDll
                            .Select(x => new TsFile
                                         {
                                             Name = x.Name,
-                                            Path = x.Namespace.Replace('.', Path.DirectorySeparatorChar),
+                                            Directory = x.Namespace.Replace('.', Path.DirectorySeparatorChar),
                                             Declarations = new[]
                                                            {
                                                                new TsEnum

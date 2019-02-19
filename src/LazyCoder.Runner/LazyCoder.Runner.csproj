@@ -10,4 +10,8 @@
       <ProjectReference Include="..\LazyCoder\LazyCoder.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="System.CommandLine.Experimental" Version="0.1.0-alpha-63724-02" />
+    </ItemGroup>
+
 </Project>
