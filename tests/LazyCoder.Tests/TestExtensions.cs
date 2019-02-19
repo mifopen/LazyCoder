@@ -8,7 +8,7 @@ namespace LazyCoder.Tests
         {
             var writerContext = new WriterContext();
             writerContext.Write(tsThing);
-            var result = writerContext.GetResult();
+            var result = writerContext.GetResult().Trim();
             result.ShouldBeLines(lines);
         }
     }

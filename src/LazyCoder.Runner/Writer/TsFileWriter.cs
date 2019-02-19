@@ -1,3 +1,4 @@
+using System.Linq;
 using LazyCoder.Typescript;
 
 namespace LazyCoder.Runner.Writer
@@ -12,7 +13,8 @@ namespace LazyCoder.Runner.Writer
                 keyboard.Write(tsImport);
             }
 
-            keyboard.NewLine();
+            if (tsFile.Imports.Any())
+                keyboard.NewLine();
 
             foreach (var tsDeclaration in tsFile.Declarations)
             {

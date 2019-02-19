@@ -58,7 +58,7 @@ namespace LazyCoder.Runner.Writer
 
         public string GetResult()
         {
-            return sb.ToString().Trim();
+            return sb.ToString();
         }
     }
 }
