@@ -24,6 +24,18 @@ namespace LazyCoder.Runner.Writer
             NewLine();
         }
 
+        public void IndentAndType(params string[] words)
+        {
+            TypeIndent();
+            Type(words);
+        }
+
+        public void IndentAndTypeLine(string line)
+        {
+            TypeIndent();
+            TypeLine(line);
+        }
+
         public IDisposable Indent()
         {
             indentLevel++;

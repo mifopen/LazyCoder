@@ -14,8 +14,7 @@ namespace LazyCoder.Runner.Writer
             {
                 foreach (var tsEnumValue in tsEnum.Values)
                 {
-                    keyboard.TypeIndent();
-                    keyboard.Type(tsEnumValue.Name, " = ");
+                    keyboard.IndentAndType(tsEnumValue.Name, " = ");
                     switch (tsEnumValue)
                     {
                         case TsEnumNumberValue numberValue:
