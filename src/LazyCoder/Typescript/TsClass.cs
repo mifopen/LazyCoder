@@ -7,6 +7,6 @@ namespace LazyCoder.Typescript
     {
         public TsName Name { get; set; }
         public TsExportKind ExportKind { get; set; }
-        public IEnumerable<TsName> BaseClasses { get; set; } = Array.Empty<TsName>();
+        public IEnumerable<TsName> Base { get; set; } = Array.Empty<TsName>();
     }
 }
