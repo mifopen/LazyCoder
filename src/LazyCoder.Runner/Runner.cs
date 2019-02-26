@@ -16,6 +16,7 @@ namespace LazyCoder.Runner
         {
             dll = Path.GetFullPath(dll);
             var loadedTypes = new AssemblyReader().Read(dll);
+            var csAstTypes = CsAstFactory.Create(loadedTypes);
             var coderTypes = GetCoderTypes(dll);
             Console.Out.WriteLine("Found: " + string.Join(", ", coderTypes.Select(x => x.Name)));
             foreach (var coderType in coderTypes)
@@ -23,7 +24,7 @@ namespace LazyCoder.Runner
                 Console.Out.WriteLine("Start Coder " + coderType.Name);
                 var ctor = (Func<ICoder>)Expression.Lambda(Expression.New(coderType)).Compile();
                 var coder = ctor();
-                var tsFiles = coder.Rewrite(loadedTypes).ToArray();
+                var tsFiles = coder.Rewrite(csAstTypes).ToArray();
                 Console.Out.WriteLine($"Gonna create {tsFiles.Length} files");
 
                 Directory.CreateDirectory(Path.GetFullPath(outputDirectory));

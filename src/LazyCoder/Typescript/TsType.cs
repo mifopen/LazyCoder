@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using LazyCoder.CSharp;
 
 namespace LazyCoder.Typescript
 {
@@ -10,19 +11,21 @@ namespace LazyCoder.Typescript
         public IEnumerable<TsType> Generics { get; set; } = Array.Empty<TsType>();
         public bool Nullable { get; set; }
 
-        public static TsType From(Type type)
+        public static TsType From(CsType type)
         {
             return new TsType
                    {
                        Name = GetNameFrom(TypeHelpers.UnwrapNullable(type)),
                        Nullable = TypeHelpers.IsNullable(type),
-                       Generics = type.GetGenericArguments()
-                                      .Select(From)
+                       Generics = type is CsClass csClass
+                                      ? csClass.Generics.Select(From)
+                                      : Array.Empty<TsType>()
                    };
         }
 
-        private static string GetNameFrom(Type type)
+        private static string GetNameFrom(CsType csType)
         {
+            var type = csType.OriginalType;
             if (type == typeof(void))
                 return "void";
             if (type == typeof(string))
@@ -39,7 +42,7 @@ namespace LazyCoder.Typescript
                 return "string";
             if (type == typeof(DateTime))
                 return "Date";
-            return TypeHelpers.GetTypeName(type);
+            return TypeHelpers.GetTypeName(csType);
         }
     }
 }

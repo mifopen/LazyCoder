@@ -9,7 +9,7 @@ namespace LazyCoder.Runner.Writer
                           TsNamespace tsNamespace)
         {
             keyboard.Write(tsNamespace.ExportKind)
-                    .Type("namespace ", tsNamespace.Name, " ");
+                    .Type("namespace ", tsNamespace.Name.Value, " ");
             using (keyboard.Block())
             {
                 var declarations = tsNamespace.Declarations.ToArray();

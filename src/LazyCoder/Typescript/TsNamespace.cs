@@ -2,10 +2,8 @@ using System.Collections.Generic;
 
 namespace LazyCoder.Typescript
 {
-    public class TsNamespace : ITsDeclaration
+    public class TsNamespace : TsDeclaration
     {
-        public string Name { get; set; }
-        public TsExportKind ExportKind { get; set; }
-        public IEnumerable<ITsDeclaration> Declarations { get; set; }
+        public IEnumerable<TsDeclaration> Declarations { get; set; }
     }
 }

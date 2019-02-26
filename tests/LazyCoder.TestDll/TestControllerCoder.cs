@@ -1,21 +1,20 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
+using LazyCoder.CSharp;
 using LazyCoder.Typescript;
 
 namespace LazyCoder.TestDll
 {
-    public class TestControllerCoder : ICoder
+    public class TestControllerCoder: ICoder
     {
-        public IEnumerable<TsFile> Rewrite(Type[] types)
+        public IEnumerable<TsFile> Rewrite(IEnumerable<CsType> types)
         {
-            var controllers = types.Where(x => x.Name.EndsWith("Controller"));
+            var controllers = types.OfType<CsClass>().Where(x => x.Name.EndsWith("Controller"));
             return controllers.Select(RewriteController);
         }
 
-        private static TsFile RewriteController(Type controllerType)
+        private static TsFile RewriteController(CsClass controllerType)
         {
             var name = controllerType.Name.Replace("Controller", "Api");
             return new TsFile
@@ -26,31 +25,34 @@ namespace LazyCoder.TestDll
                                       {
                                           new TsNamespace
                                           {
-                                              Name = name,
+                                              Name = new TsName
+                                                     {
+                                                         Value = name
+                                                     },
                                               ExportKind = TsExportKind.Named,
-                                              Declarations = controllerType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
-                                                                           .Where(m => !typeof(object)
-                                                                                        .GetMethods()
-                                                                                        .Select(me => me.Name)
-                                                                                        .Contains(m.Name))
-                                                                           .Select(RewriteMethod)
+                                              Declarations = controllerType
+                                                             .Members
+                                                             .OfType<CsMethod>()
+                                                             .Where(x => x.AccessModifier == CsAccessModifier.Public
+                                                                         && !x.IsStatic)
+                                                             .Select(RewriteMethod)
                                           }
                                       }
                    };
         }
 
-        private static TsFunction RewriteMethod(MethodInfo method)
+        private static TsFunction RewriteMethod(CsMethod method)
         {
             return new TsFunction
                    {
                        Name = new TsName { Value = method.Name },
                        ExportKind = TsExportKind.Named,
                        ReturnType = TsType.From(method.ReturnType),
-                       Parameters = method.GetParameters()
+                       Parameters = method.Parameters
                                           .Select(x => new TsFunctionParameter
                                                        {
                                                            Name = x.Name,
-                                                           Type = TsType.From(x.ParameterType)
+                                                           Type = TsType.From(x.Type)
                                                        }),
                        Body = "// some body"
                    };

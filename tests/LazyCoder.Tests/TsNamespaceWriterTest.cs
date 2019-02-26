@@ -10,13 +10,13 @@ namespace LazyCoder.Tests
         {
             var tsNamespace = new TsNamespace
                               {
-                                  Name = "SomeNamespace",
+                                  Name = new TsName { Value = "SomeNamespace" },
                                   ExportKind = TsExportKind.Named,
                                   Declarations = new[]
                                                  {
                                                      new TsEnum
                                                      {
-                                                         Name = new TsName {Value = "SomeEnum"},
+                                                         Name = new TsName { Value = "SomeEnum" },
                                                          ExportKind = TsExportKind.Named,
                                                          Values = new[]
                                                                   {

@@ -15,9 +15,10 @@ namespace LazyCoder.Tests
         {
             var dllPath =
                 Path.GetFullPath("../../../../LazyCoder.TestDll/bin/Debug/netstandard2.0/LazyCoder.TestDll.dll");
-            var moduleDefinition = new AssemblyReader().Read(dllPath);
+            var types = new AssemblyReader().Read(dllPath);
+            var csAstTypes = CsAstFactory.Create(types);
             var testCoder = new TestCoder();
-            var tsFiles = testCoder.Rewrite(moduleDefinition);
+            var tsFiles = testCoder.Rewrite(csAstTypes);
             foreach (var tsFile in tsFiles)
             {
                 foreach (var tsDeclaration in tsFile.Declarations)

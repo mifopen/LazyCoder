@@ -28,7 +28,7 @@ namespace LazyCoder.Tests
                                                 new TsNamespace
                                                 {
                                                     ExportKind = TsExportKind.Named,
-                                                    Name = "SomeNamespace",
+                                                    Name = new TsName{Value = "SomeNamespace"},
                                                     Declarations = new[]
                                                                    {
                                                                        new TsEnum

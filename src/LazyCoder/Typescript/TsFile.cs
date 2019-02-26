@@ -8,6 +8,6 @@ namespace LazyCoder.Typescript
         public string Name { get; set; }
         public string Directory { get; set; }
         public IEnumerable<TsImport> Imports { get; set; } = Array.Empty<TsImport>();
-        public IEnumerable<ITsDeclaration> Declarations { get; set; } = Array.Empty<ITsDeclaration>();
+        public IEnumerable<TsDeclaration> Declarations { get; set; } = Array.Empty<TsDeclaration>();
     }
 }

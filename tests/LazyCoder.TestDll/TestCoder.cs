@@ -1,39 +1,39 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using LazyCoder.CSharp;
 using LazyCoder.Typescript;
 
 namespace LazyCoder.TestDll
 {
     public class TestCoder : ICoder
     {
-        public IEnumerable<TsFile> Rewrite(Type[] types)
+        public IEnumerable<TsFile> Rewrite(IEnumerable<CsType> types)
         {
-            return types.Where(x => x.IsEnum)
-                        .Select(x => new TsFile
-                                     {
-                                         Name = x.Name,
-                                         Directory = x.Namespace.Replace('.', Path.DirectorySeparatorChar),
-                                         Declarations = new[]
-                                                        {
-                                                            new TsEnum
-                                                            {
-                                                                Name = new TsName
-                                                                       {
-                                                                           Value = x.Name
-                                                                       },
-                                                                ExportKind = TsExportKind.Named,
-                                                                Values = x.GetFields()
-                                                                          .Where(f => f.Name != "value__")
-                                                                          .Select(y => new TsEnumNumberValue
-                                                                                       {
-                                                                                           Name = y.Name,
-                                                                                           Value = (int)y.GetRawConstantValue()
-                                                                                       })
-                                                            }
-                                                        }
-                                     });
+            return types
+                   .OfType<CsEnum>()
+                   .Select(x => new TsFile
+                                {
+                                    Name = x.Name,
+                                    Directory = x.Namespace.Replace('.', Path.DirectorySeparatorChar),
+                                    Declarations = new[]
+                                                   {
+                                                       new TsEnum
+                                                       {
+                                                           Name = new TsName
+                                                                  {
+                                                                      Value = x.Name
+                                                                  },
+                                                           ExportKind = TsExportKind.Named,
+                                                           Values = x.Values
+                                                                     .Select(y => new TsEnumNumberValue
+                                                                                  {
+                                                                                      Name = y.Name,
+                                                                                      Value = y.Value
+                                                                                  })
+                                                       }
+                                                   }
+                                });
         }
     }
 }
