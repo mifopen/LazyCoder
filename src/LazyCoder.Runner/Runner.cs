@@ -10,14 +10,14 @@ namespace LazyCoder.Runner
 {
     public class Runner
     {
-        public static int Run(string dll,
-                              string outputDirectory
+        public static void Run(string dll,
+                               string outputDirectory
         )
         {
             dll = Path.GetFullPath(dll);
-            var loadedTypes = new AssemblyReader().Read(dll);
+            var loadedTypes = AssemblyReader.Read(dll);
             var csAstTypes = CsAstFactory.Create(loadedTypes);
-            var coderTypes = GetCoderTypes(dll);
+            var coderTypes = GetCoderTypes(loadedTypes);
             Console.Out.WriteLine("Found: " + string.Join(", ", coderTypes.Select(x => x.Name)));
             foreach (var coderType in coderTypes)
             {
@@ -32,8 +32,6 @@ namespace LazyCoder.Runner
 
                 Console.Out.WriteLine($"Coder {coderType.Name} finished");
             }
-
-            return 0;
         }
 
         private static void WriteFile(string outputDirectory,
@@ -47,13 +45,11 @@ namespace LazyCoder.Runner
             File.WriteAllText(Path.Combine(directory, tsFile.Name + ".ts"), content);
         }
 
-        private static Type[] GetCoderTypes(string dll)
+        private static Type[] GetCoderTypes(Type[] types)
         {
-            return Assembly.LoadFile(dll)
-                           .GetTypes()
-                           .Where(x => x.GetInterfaces()
-                                        .Any(y => y == typeof(ICoder)))
-                           .ToArray();
+            return types.Where(x => x.GetInterfaces()
+                                     .Any(y => y == typeof(ICoder)))
+                        .ToArray();
         }
     }
 }

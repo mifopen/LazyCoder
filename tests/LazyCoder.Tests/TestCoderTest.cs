@@ -15,7 +15,7 @@ namespace LazyCoder.Tests
         {
             var dllPath =
                 Path.GetFullPath("../../../../LazyCoder.TestDll/bin/Debug/netstandard2.0/LazyCoder.TestDll.dll");
-            var types = new AssemblyReader().Read(dllPath);
+            var types = AssemblyReader.Read(dllPath);
             var csAstTypes = CsAstFactory.Create(types);
             var testCoder = new TestCoder();
             var tsFiles = testCoder.Rewrite(csAstTypes);
