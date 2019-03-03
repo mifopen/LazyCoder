@@ -17,7 +17,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\LazyCoder\LazyCoder.csproj" />
-      <ProjectReference Include="..\LazyCoder.TestDll\LazyCoder.TestDll.csproj" />
     </ItemGroup>
 
 </Project>
