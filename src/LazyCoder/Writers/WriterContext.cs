@@ -1,9 +1,9 @@
 using System;
 using System.Text;
 
-namespace LazyCoder.Writer
+namespace LazyCoder.Writers
 {
-    public class WriterContext: IKeyboard
+    internal class WriterContext: IKeyboard
     {
         private readonly StringBuilder sb = new StringBuilder();
         private int indentLevel;

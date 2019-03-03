@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using LazyCoder.Typescript;
-using LazyCoder.Writer;
+using LazyCoder.Writers;
 
 namespace LazyCoder
 {
     public static class Runner
     {
-        public static IEnumerable<TsFile> Run(IEnumerable<Type> types,
-                                              IEnumerable<ICoder> coders)
+        public static IEnumerable<TsFile> Convert(IEnumerable<Type> types,
+                                                  IEnumerable<ICoder> coders)
         {
             var csAstTypes = CsAstFactory.Create(types).ToArray();
             foreach (var coder in coders)

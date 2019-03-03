@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LazyCoder.CSharp;
+using LazyCoder.Writers;
 
 namespace LazyCoder.Typescript
 {

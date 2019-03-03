@@ -1,9 +1,9 @@
 using System;
 using LazyCoder.CSharp;
 
-namespace LazyCoder.Typescript
+namespace LazyCoder.Writers
 {
-    public static class TypeHelpers
+    internal static class TypeHelpers
     {
         public static string GetTypeName(CsType type)
         {

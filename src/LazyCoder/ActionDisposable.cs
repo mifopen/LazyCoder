@@ -2,7 +2,7 @@ using System;
 
 namespace LazyCoder
 {
-    public class ActionDisposable: IDisposable
+    internal class ActionDisposable: IDisposable
     {
         private readonly Action action;
 

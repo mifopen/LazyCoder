@@ -1,9 +1,9 @@
 using System;
 using LazyCoder.Typescript;
 
-namespace LazyCoder.Writer
+namespace LazyCoder.Writers
 {
-    public class TsEnumWriter: ITsWriter<TsEnum>
+    internal class TsEnumWriter: ITsWriter<TsEnum>
     {
         public void Write(IKeyboard keyboard,
                           TsEnum tsEnum)

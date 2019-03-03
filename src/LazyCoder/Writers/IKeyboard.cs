@@ -1,6 +1,6 @@
 using System;
 
-namespace LazyCoder.Writer
+namespace LazyCoder.Writers
 {
     public interface IKeyboard
     {

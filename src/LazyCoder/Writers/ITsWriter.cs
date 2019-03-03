@@ -1,6 +1,6 @@
-namespace LazyCoder.Writer
+namespace LazyCoder.Writers
 {
-    public interface ITsWriter<in T>
+    internal interface ITsWriter<in T>
     {
         void Write(IKeyboard keyboard, T tsThing);
     }

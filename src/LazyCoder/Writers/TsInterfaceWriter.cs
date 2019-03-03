@@ -1,8 +1,8 @@
 using LazyCoder.Typescript;
 
-namespace LazyCoder.Writer
+namespace LazyCoder.Writers
 {
-    public class TsInterfaceWriter: ITsWriter<TsInterface>
+    internal class TsInterfaceWriter: ITsWriter<TsInterface>
     {
         public void Write(IKeyboard keyboard,
                           TsInterface tsInterface)

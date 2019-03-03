@@ -1,9 +1,9 @@
 using System.Linq;
 using LazyCoder.Typescript;
 
-namespace LazyCoder.Writer
+namespace LazyCoder.Writers
 {
-    public class TsTypeWriter: ITsWriter<TsType>
+    internal class TsTypeWriter: ITsWriter<TsType>
     {
         public void Write(IKeyboard keyboard,
                           TsType tsType)

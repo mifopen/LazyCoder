@@ -4,9 +4,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace LazyCoder.Writer
+namespace LazyCoder.Writers
 {
-    public static class TsWriterFactory
+    internal static class TsWriterFactory
     {
         private static readonly Dictionary<Type, ITsWriter<object>> writersMap = CreateWritersMap();
 
