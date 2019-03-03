@@ -7,7 +7,7 @@ namespace LazyCoder.Writers
     {
         public static string GetTypeName(CsType type)
         {
-            var genericParametersIndex = type.Name.IndexOf("`");
+            var genericParametersIndex = type.Name.IndexOf("`", StringComparison.InvariantCulture);
             return genericParametersIndex == -1
                        ? type.Name
                        : type.Name.Substring(0, genericParametersIndex);
