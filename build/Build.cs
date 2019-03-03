@@ -14,7 +14,7 @@ using static Nuke.Common.IO.PathConstruction;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 [CheckBuildProjectConfigurations]
-class Build : NukeBuild
+class Build: NukeBuild
 {
     public static int Main() => Execute<Build>(x => x.Compile);
 

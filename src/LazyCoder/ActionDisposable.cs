@@ -1,8 +1,8 @@
 using System;
 
-namespace LazyCoder.Runner
+namespace LazyCoder
 {
-    public class ActionDisposable : IDisposable
+    public class ActionDisposable: IDisposable
     {
         private readonly Action action;
 

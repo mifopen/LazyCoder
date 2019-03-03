@@ -1,4 +1,4 @@
-using LazyCoder.Runner.Writer;
+using LazyCoder.Writer;
 
 namespace LazyCoder.Tests
 {

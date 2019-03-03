@@ -2,9 +2,9 @@ using System;
 using System.Linq;
 using LazyCoder.Typescript;
 
-namespace LazyCoder.Runner.Writer
+namespace LazyCoder.Writer
 {
-    public class TsFunctionWriter : ITsWriter<TsFunction>
+    public class TsFunctionWriter: ITsWriter<TsFunction>
     {
         public void Write(IKeyboard keyboard,
                           TsFunction tsFunction)
@@ -33,7 +33,7 @@ namespace LazyCoder.Runner.Writer
             keyboard.Type(" ");
             using (keyboard.Block())
             {
-                var bodyLines = tsFunction.Body.Split(Environment.NewLine);
+                var bodyLines = tsFunction.Body.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
                 foreach (var bodyLine in bodyLines)
                 {
                     using (keyboard.Line())

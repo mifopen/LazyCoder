@@ -1,16 +1,16 @@
 using System;
 using System.Text;
 
-namespace LazyCoder.Runner.Writer
+namespace LazyCoder.Writer
 {
-    public class WriterContext : IKeyboard
+    public class WriterContext: IKeyboard
     {
         private readonly StringBuilder sb = new StringBuilder();
         private int indentLevel;
 
         public IKeyboard Type(params string[] words)
         {
-            sb.AppendJoin("", words);
+            sb.Append(string.Join("", words));
             return this;
         }
 

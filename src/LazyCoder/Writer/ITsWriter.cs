@@ -1,4 +1,4 @@
-namespace LazyCoder.Runner.Writer
+namespace LazyCoder.Writer
 {
     public interface ITsWriter<in T>
     {

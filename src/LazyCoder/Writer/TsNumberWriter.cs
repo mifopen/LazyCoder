@@ -1,6 +1,6 @@
-namespace LazyCoder.Runner.Writer
+namespace LazyCoder.Writer
 {
-    public class TsNumberWriter : ITsWriter<int>
+    public class TsNumberWriter: ITsWriter<int>
     {
         public void Write(IKeyboard keyboard, int number)
         {

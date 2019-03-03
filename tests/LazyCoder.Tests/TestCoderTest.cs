@@ -1,9 +1,4 @@
-using System.IO;
 using System.Linq;
-using LazyCoder.Runner;
-using LazyCoder.TestDll;
-using LazyCoder.Typescript;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine.ClientProtocol;
 using Xunit;
 
 namespace LazyCoder.Tests
@@ -13,22 +8,42 @@ namespace LazyCoder.Tests
         [Fact]
         public void Simple()
         {
-            var dllPath =
-                Path.GetFullPath("../../../../LazyCoder.TestDll/bin/Debug/netstandard2.0/LazyCoder.TestDll.dll");
-            var types = AssemblyReader.Read(dllPath);
-            var csAstTypes = CsAstFactory.Create(types);
-            var testCoder = new TestCoder();
-            var tsFiles = testCoder.Rewrite(csAstTypes);
-            foreach (var tsFile in tsFiles)
+            var tsFiles = Runner.Run(new[]
+                                     {
+                                         typeof(SomeEnum),
+                                         typeof(SomeController)
+                                     },
+                                     new ICoder[]
+                                     {
+                                         new TestCoder(),
+                                         new TestControllerCoder()
+                                     })
+                                .ToArray();
+
+            var enumTsFile = tsFiles.Single(x => x.Name == "SomeEnum");
+
+            foreach (var tsDeclaration in enumTsFile.Declarations)
             {
-                foreach (var tsDeclaration in tsFile.Declarations)
-                {
-                    tsDeclaration.ShouldBeTranslatedTo("export enum SomeEnum {",
-                                                       "    FirstValue = 0,",
-                                                       "    SecondValue = 1,",
-                                                       "    ThirdValue = 2,",
-                                                       "}");
-                }
+                tsDeclaration.ShouldBeTranslatedTo("export enum SomeEnum {",
+                                                   "    FirstValue = 0,",
+                                                   "    SecondValue = 1,",
+                                                   "    ThirdValue = 2,",
+                                                   "}");
+            }
+
+            var controllerTsFile = tsFiles.Single(x => x.Name == "SomeApi");
+
+            foreach (var tsDeclaration in controllerTsFile.Declarations)
+            {
+                tsDeclaration.ShouldBeTranslatedTo("export namespace SomeApi {",
+                                                   "    export function SomeAction(value: string): number {",
+                                                   "        // some body",
+                                                   "    }",
+                                                   "",
+                                                   "    export function SomeOtherAction(value: number): boolean {",
+                                                   "        // some body",
+                                                   "    }",
+                                                   "}");
             }
         }
     }

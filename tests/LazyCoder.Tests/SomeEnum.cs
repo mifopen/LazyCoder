@@ -1,4 +1,4 @@
-﻿namespace LazyCoder.TestDll
+﻿namespace LazyCoder.Tests
 {
     public enum SomeEnum
     {

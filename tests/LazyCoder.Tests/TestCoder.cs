@@ -4,9 +4,9 @@ using System.Linq;
 using LazyCoder.CSharp;
 using LazyCoder.Typescript;
 
-namespace LazyCoder.TestDll
+namespace LazyCoder.Tests
 {
-    public class TestCoder : ICoder
+    public class TestCoder: ICoder
     {
         public IEnumerable<TsFile> Rewrite(IEnumerable<CsType> types)
         {

@@ -7,7 +7,7 @@ using LazyCoder.CSharp;
 namespace LazyCoder
 {
     //todo cyclic ast
-    public static class CsAstFactory
+    internal static class CsAstFactory
     {
         public static IEnumerable<CsType> Create(IEnumerable<Type> types)
         {

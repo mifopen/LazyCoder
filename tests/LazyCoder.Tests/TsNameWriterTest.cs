@@ -13,7 +13,7 @@ namespace LazyCoder.Tests
                              Value = "SomeName",
                              Generics = new[]
                                         {
-                                            new TsName {Value = "FirstGeneric"},
+                                            new TsName { Value = "FirstGeneric" },
                                             new TsName
                                             {
                                                 Value = "SecondGeneric",

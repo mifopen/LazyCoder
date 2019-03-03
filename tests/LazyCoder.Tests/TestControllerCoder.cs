@@ -4,7 +4,7 @@ using System.Linq;
 using LazyCoder.CSharp;
 using LazyCoder.Typescript;
 
-namespace LazyCoder.TestDll
+namespace LazyCoder.Tests
 {
     public class TestControllerCoder: ICoder
     {

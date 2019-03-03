@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace LazyCoder.Runner.Writer
+namespace LazyCoder.Writer
 {
     public static class TsWriterFactory
     {
@@ -44,7 +44,7 @@ namespace LazyCoder.Runner.Writer
             return ctor();
         }
 
-        private class UntypedTsWriter<T> : ITsWriter<object>
+        private class UntypedTsWriter<T>: ITsWriter<object>
         {
             private readonly ITsWriter<T> actual;
 
