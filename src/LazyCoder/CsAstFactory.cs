@@ -11,7 +11,7 @@ namespace LazyCoder
     {
         public static IEnumerable<CsType> Create(IEnumerable<Type> types)
         {
-            return types.Select(Create);
+            return types.Select(Create).Where(x => x != null);
         }
 
         public static CsType Create(Type type)
@@ -57,7 +57,12 @@ namespace LazyCoder
                        };
             }
 
-            throw new Exception($"Type {type.Name} is unsupported");
+            if (type.IsInterface)
+            {
+                return null;
+            }
+
+            throw new Exception($"Type {type.Name} from {type.Assembly.FullName} is unsupported");
         }
 
         private static CsClassMember Create(MemberInfo memberInfo)
@@ -96,7 +101,10 @@ namespace LazyCoder
                    };
         }
 
-        private static CsAccessModifier GetAccessModifier(bool isPrivate, bool isFamily, bool isPublic, bool isAssembly)
+        private static CsAccessModifier GetAccessModifier(bool isPrivate,
+                                                          bool isFamily,
+                                                          bool isPublic,
+                                                          bool isAssembly)
         {
             if (isPrivate)
                 return CsAccessModifier.Private;
