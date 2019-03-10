@@ -7,7 +7,7 @@ using LazyCoder.CSharp;
 namespace LazyCoder
 {
     //todo cyclic ast
-    internal static class CsAstFactory
+    public static class CsAstFactory
     {
         public static IEnumerable<CsType> Create(IEnumerable<Type> types)
         {
@@ -22,6 +22,13 @@ namespace LazyCoder
                        {
                            Name = type.Name,
                            Namespace = type.Namespace,
+                           Attributes = type.CustomAttributes
+                                            .Select(x => new CsAttribute
+                                                         {
+                                                             Name = x.AttributeType.Name,
+                                                             OriginalType = x.AttributeType
+                                                         })
+                                            .ToArray(),
                            OriginalType = type,
                            Values = type.GetFields()
                                         .Where(f => f.Name != "value__")
@@ -39,6 +46,13 @@ namespace LazyCoder
                        {
                            Name = type.Name,
                            Namespace = type.Namespace,
+                           Attributes = type.CustomAttributes
+                                            .Select(x => new CsAttribute
+                                                         {
+                                                             Name = x.AttributeType.Name,
+                                                             OriginalType = x.AttributeType
+                                                         })
+                                            .ToArray(),
                            OriginalType = type,
                            Members = type.GetMembers()
                                          .Where(m => !typeof(object)
@@ -46,6 +60,7 @@ namespace LazyCoder
                                                       .Select(me => me.Name)
                                                       .Contains(m.Name))
                                          .Select(Create)
+                                         .Where(x => x != null)
                        };
             }
 
@@ -59,7 +74,26 @@ namespace LazyCoder
 
             if (type.IsInterface)
             {
-                return null;
+                return new CsInterface
+                       {
+                           Name = type.Name,
+                           Namespace = type.Namespace,
+                           Attributes = type.CustomAttributes
+                                            .Select(x => new CsAttribute
+                                                         {
+                                                             Name = x.AttributeType.Name,
+                                                             OriginalType = x.AttributeType
+                                                         })
+                                            .ToArray(),
+                           OriginalType = type,
+                           Members = type.GetMembers()
+                                         .Where(m => !typeof(object)
+                                                      .GetMembers()
+                                                      .Select(me => me.Name)
+                                                      .Contains(m.Name))
+                                         .Select(Create)
+                                         .Where(x => x != null)
+                       };
             }
 
             throw new Exception($"Type {type.Name} from {type.Assembly.FullName} is unsupported");
@@ -71,13 +105,21 @@ namespace LazyCoder
             {
                 case MethodInfo methodInfo:
                     return Create(methodInfo);
+                case PropertyInfo propertyInfo:
+                    return Create(propertyInfo);
+                case TypeInfo _:
+                case FieldInfo _:
+                    return null;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(memberInfo), memberInfo, null);
+                    throw new ArgumentOutOfRangeException(nameof(memberInfo), memberInfo.GetType().Name, null);
             }
         }
 
         private static CsMethod Create(MethodInfo methodInfo)
         {
+            if (methodInfo.IsSpecialName)
+                return null;
+
             return new CsMethod
                    {
                        Name = methodInfo.Name,
@@ -86,9 +128,39 @@ namespace LazyCoder
                                                           methodInfo.IsFamily,
                                                           methodInfo.IsPublic,
                                                           methodInfo.IsAssembly),
+                       Attributes = methodInfo.CustomAttributes
+                                              .Select(x => new CsAttribute
+                                                           {
+                                                               Name = x.AttributeType.Name,
+                                                               OriginalType = x.AttributeType
+                                                           })
+                                              .ToArray(),
                        ReturnType = Create(methodInfo.ReturnType),
                        Parameters = methodInfo.GetParameters()
-                                              .Select(Create)
+                                              .Select(Create),
+                       OriginalMethod = methodInfo
+                   };
+        }
+
+        private static CsProperty Create(PropertyInfo propertyInfo)
+        {
+            var getMethod = propertyInfo.GetGetMethod();
+            return new CsProperty
+                   {
+                       Name = propertyInfo.Name,
+                       IsStatic = getMethod.IsStatic,
+                       AccessModifier = GetAccessModifier(getMethod.IsPrivate,
+                                                          getMethod.IsFamily,
+                                                          getMethod.IsPublic,
+                                                          getMethod.IsAssembly),
+                       Attributes = propertyInfo.CustomAttributes
+                                                .Select(x => new CsAttribute
+                                                             {
+                                                                 Name = x.AttributeType.Name,
+                                                                 OriginalType = x.AttributeType
+                                                             })
+                                                .ToArray(),
+                       Type = Create(propertyInfo.PropertyType)
                    };
         }
 
