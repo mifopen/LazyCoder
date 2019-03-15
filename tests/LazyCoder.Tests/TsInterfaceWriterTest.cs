@@ -14,22 +14,9 @@ namespace LazyCoder.Tests
                                   Name = new TsName { Value = "SomeInterface" },
                                   Properties = new[]
                                                {
-                                                   new TsInterfaceProperty
-                                                   {
-                                                       Name = "FirstProperty",
-                                                       Type = new TsType { Name = "boolean" }
-                                                   },
-                                                   new TsInterfaceProperty
-                                                   {
-                                                       Name = "SecondProperty",
-                                                       Type = new TsType { Name = "number" },
-                                                       Optional = true
-                                                   },
-                                                   new TsInterfaceProperty
-                                                   {
-                                                       Name = "ThirdProperty",
-                                                       Type = new TsType { Name = "string", Nullable = true }
-                                                   }
+                                                   new TsInterfaceProperty { Name = "FirstProperty", Type = TsPredefinedType.Boolean() },
+                                                   new TsInterfaceProperty { Name = "SecondProperty", Type = TsPredefinedType.Number(), Optional = true },
+                                                   new TsInterfaceProperty { Name = "ThirdProperty", Type = new TsUnionType(TsPredefinedType.String(), new TsNull()) }
                                                }
                               };
             tsInterface.ShouldBeTranslatedTo("export interface SomeInterface {",

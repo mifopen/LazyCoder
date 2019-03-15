@@ -1,49 +1,59 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using LazyCoder.CSharp;
 using LazyCoder.Writers;
 
 namespace LazyCoder.Typescript
 {
-    public class TsType
+    public class TsStringLiteralType: TsType
     {
-        public string Name { get; set; }
-        public IEnumerable<TsType> Generics { get; set; } = Array.Empty<TsType>();
-        public bool Nullable { get; set; }
+        public string String { get; set; }
+    }
 
+    public class TsNull: TsType
+    {
+    }
+
+    public abstract class TsType
+    {
         public static TsType From(CsType type)
         {
-            return new TsType
-                   {
-                       Name = GetNameFrom(TypeHelpers.UnwrapNullable(type)),
-                       Nullable = TypeHelpers.IsNullable(type),
-                       Generics = type is CsClass csClass
-                                      ? csClass.Generics.Select(From)
-                                      : Array.Empty<TsType>()
-                   };
+            var tsType = From(TypeHelpers.UnwrapNullable(type).OriginalType);
+            if (TypeHelpers.IsNullable(type))
+                return new TsUnionType(tsType, new TsNull());
+
+            return tsType;
+            // return new TsTypeReference
+            //        {
+            //            TypeName = FromInternal(TypeHelpers.UnwrapNullable(type)),
+            //            Nullable = TypeHelpers.IsNullable(type),
+            //            TypeArguments = type is CsClass csClass
+            //                                ? csClass.Generics.Select(From)
+            //                                : Array.Empty<TsType>()
+            //        };
         }
 
-        private static string GetNameFrom(CsType csType)
+        private static TsType From(Type type)
         {
-            var type = csType.OriginalType;
             if (type == typeof(void))
-                return "void";
+                return TsPredefinedType.Void();
             if (type == typeof(string))
-                return "string";
+                return TsPredefinedType.String();
             if (type == typeof(int)
                 || type == typeof(double)
                 || type == typeof(float)
                 || type == typeof(decimal)
                 || type == typeof(long))
-                return "number";
+                return TsPredefinedType.Number();
             if (type == typeof(bool))
-                return "boolean";
+                return TsPredefinedType.Boolean();
             if (type == typeof(Guid))
-                return "string";
+                return TsPredefinedType.String();
             if (type == typeof(DateTime))
-                return "Date";
-            return TypeHelpers.GetTypeName(csType);
+                return new TsTypeReference("Date");
+
+            throw new Exception();
+            // return TypeHelpers.GetTypeName(csType);
         }
     }
 }

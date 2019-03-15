@@ -5,6 +5,6 @@ namespace LazyCoder.Typescript
 {
     public class TsClass: TsDeclaration
     {
-        public IEnumerable<TsName> Base { get; set; } = Array.Empty<TsName>();
+        public IEnumerable<TsType> Base { get; set; } = Array.Empty<TsType>();
     }
 }

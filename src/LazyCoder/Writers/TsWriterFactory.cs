@@ -12,7 +12,13 @@ namespace LazyCoder.Writers
 
         public static ITsWriter<object> CreateFor(Type type)
         {
-            return writersMap[type];
+            ITsWriter<object> writer;
+            while (!writersMap.TryGetValue(type, out writer))
+            {
+                type = type.BaseType;
+            }
+
+            return writer;
         }
 
         private static Dictionary<Type, ITsWriter<object>> CreateWritersMap()
@@ -33,7 +39,8 @@ namespace LazyCoder.Writers
                                          x => CreateUntypedTsWriterFor(x.Type, x.GenericType));
         }
 
-        private static ITsWriter<object> CreateUntypedTsWriterFor(Type writerType, Type genericType)
+        private static ITsWriter<object> CreateUntypedTsWriterFor(Type writerType,
+                                                                  Type genericType)
         {
             var typedWriter = ( (Func<object>)Expression
                                               .Lambda(Expression.New(writerType)).Compile() )();
@@ -53,7 +60,8 @@ namespace LazyCoder.Writers
                 this.actual = actual;
             }
 
-            public void Write(IKeyboard keyboard, object tsThing)
+            public void Write(IKeyboard keyboard,
+                              object tsThing)
             {
                 actual.Write(keyboard, (T)tsThing);
             }

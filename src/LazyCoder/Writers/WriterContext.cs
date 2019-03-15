@@ -10,7 +10,13 @@ namespace LazyCoder.Writers
 
         public IKeyboard Type(params string[] words)
         {
-            sb.Append(string.Join("", words));
+            return TypeJoin("", words);
+        }
+
+        public IKeyboard TypeJoin(string separator,
+                                  params string[] words)
+        {
+            sb.Append(string.Join(separator, words));
             return this;
         }
 

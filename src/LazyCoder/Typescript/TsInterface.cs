@@ -1,10 +1,11 @@
+using System;
 using System.Collections.Generic;
 
 namespace LazyCoder.Typescript
 {
     public class TsInterface: TsDeclaration
     {
-        public IEnumerable<TsName> Base { get; set; }
-        public IEnumerable<TsInterfaceProperty> Properties { get; set; }
+        public IEnumerable<TsType> Base { get; set; } = Array.Empty<TsType>();
+        public IEnumerable<TsInterfaceProperty> Properties { get; set; } = Array.Empty<TsInterfaceProperty>();
     }
 }
