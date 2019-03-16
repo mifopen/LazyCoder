@@ -10,9 +10,7 @@ namespace LazyCoder.Writers
                           TsFunction tsFunction)
         {
             keyboard.Write(tsFunction.ExportKind)
-                    .Type("function ")
-                    .Write(tsFunction.Name)
-                    .Type("(");
+                    .Type("function ", tsFunction.Name, "(");
             var parameters = tsFunction.Parameters.ToArray();
             for (var i = 0; i < parameters.Length; i++)
             {

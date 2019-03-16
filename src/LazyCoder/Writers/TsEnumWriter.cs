@@ -9,9 +9,7 @@ namespace LazyCoder.Writers
                           TsEnum tsEnum)
         {
             keyboard.Write(tsEnum.ExportKind)
-                    .Type("enum ")
-                    .Write(tsEnum.Name)
-                    .Type(" ");
+                    .Type("enum ", tsEnum.Name, " ");
             using (keyboard.Block())
             {
                 foreach (var tsEnumValue in tsEnum.Values)

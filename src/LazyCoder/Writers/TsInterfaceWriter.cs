@@ -8,9 +8,7 @@ namespace LazyCoder.Writers
                           TsInterface tsInterface)
         {
             keyboard.Write(tsInterface.ExportKind)
-                    .Type("interface ")
-                    .Write(tsInterface.Name)
-                    .Type(" ");
+                    .Type("interface ", tsInterface.Name, " ");
             using (keyboard.Block())
             {
                 foreach (var tsInterfaceProperty in tsInterface.Properties)
