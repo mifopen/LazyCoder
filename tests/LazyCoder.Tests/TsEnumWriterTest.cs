@@ -11,10 +11,7 @@ namespace LazyCoder.Tests
             var tsEnum = new TsEnum
                          {
                              ExportKind = TsExportKind.Default,
-                             Name = new TsName
-                                    {
-                                        Value = "SomeEnum"
-                                    },
+                             Name = "SomeEnum",
                              Values = new[]
                                       {
                                           new TsEnumNumberValue

@@ -11,7 +11,7 @@ namespace LazyCoder.Tests
             var tsInterface = new TsInterface
                               {
                                   ExportKind = TsExportKind.Named,
-                                  Name = new TsName { Value = "SomeInterface" },
+                                  Name = "SomeInterface",
                                   Properties = new[]
                                                {
                                                    new TsInterfaceProperty { Name = "FirstProperty", Type = TsPredefinedType.Boolean() },

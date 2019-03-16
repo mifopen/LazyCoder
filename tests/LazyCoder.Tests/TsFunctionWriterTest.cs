@@ -11,7 +11,7 @@ namespace LazyCoder.Tests
         {
             var tsName = new TsFunction
                          {
-                             Name = new TsName { Value = "SomeFunction" },
+                             Name = "SomeFunction",
                              Parameters = new[]
                                           {
                                               new TsFunctionParameter { Name = "firstParameter", Type = new TsTypeReference("FirstType") },

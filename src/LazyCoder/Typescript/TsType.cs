@@ -52,7 +52,7 @@ namespace LazyCoder.Typescript
             if (type == typeof(DateTime))
                 return new TsTypeReference("Date");
 
-            throw new Exception();
+            return new TsTypeReference(type.Name);
             // return TypeHelpers.GetTypeName(csType);
         }
     }

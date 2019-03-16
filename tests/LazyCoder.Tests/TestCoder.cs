@@ -20,10 +20,7 @@ namespace LazyCoder.Tests
                                                    {
                                                        new TsEnum
                                                        {
-                                                           Name = new TsName
-                                                                  {
-                                                                      Value = x.Name
-                                                                  },
+                                                           Name = x.Name,
                                                            ExportKind = TsExportKind.Named,
                                                            Values = x.Values
                                                                      .Select(y => new TsEnumNumberValue

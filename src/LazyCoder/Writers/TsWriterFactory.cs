@@ -12,11 +12,15 @@ namespace LazyCoder.Writers
 
         public static ITsWriter<object> CreateFor(Type type)
         {
-            ITsWriter<object> writer;
-            while (!writersMap.TryGetValue(type, out writer))
+            var iterType = type;
+            ITsWriter<object> writer = null;
+            while (iterType != null && !writersMap.TryGetValue(iterType, out writer))
             {
-                type = type.BaseType;
+                iterType = iterType.BaseType;
             }
+
+            if(writer == null)
+                throw new Exception($"Can't find writer for {type.Name}");
 
             return writer;
         }

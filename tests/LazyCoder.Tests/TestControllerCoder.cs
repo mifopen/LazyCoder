@@ -25,10 +25,7 @@ namespace LazyCoder.Tests
                                       {
                                           new TsNamespace
                                           {
-                                              Name = new TsName
-                                                     {
-                                                         Value = name
-                                                     },
+                                              Name = name,
                                               ExportKind = TsExportKind.Named,
                                               Declarations = controllerType
                                                              .Members
@@ -45,7 +42,7 @@ namespace LazyCoder.Tests
         {
             return new TsFunction
                    {
-                       Name = new TsName { Value = method.Name },
+                       Name = method.Name,
                        ExportKind = TsExportKind.Named,
                        ReturnType = TsType.From(method.ReturnType),
                        Parameters = method.Parameters
