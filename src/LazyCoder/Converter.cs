@@ -10,8 +10,6 @@ namespace LazyCoder
 {
     public static class Converter
     {
-        private static int depth;
-
         public static TsFile[] Convert(Type[] types,
                                        ICoder[] coders)
         {
@@ -38,17 +36,14 @@ namespace LazyCoder
                                                    ResolutionContext
                                                        baseResolutionContext)
         {
-            depth++;
             var resolutionContext = baseResolutionContext.Add(tsFiles.SelectMany(GetExports));
             foreach (var tsFile in tsFiles)
             {
                 var dependencies = GetDependencies(tsFile);
-                Console.Out.WriteLine(new string('\t', depth) + $"Resolve {tsFile.Name}");
                 var imports = Resolve(dependencies, resolutionContext);
                 tsFile.Imports = tsFile.Imports.Concat(imports);
             }
 
-            depth--;
             return tsFiles.ToArray();
         }
 
@@ -107,7 +102,6 @@ namespace LazyCoder
 
             Export GetExportFor(Dependency dependency)
             {
-                Console.Out.WriteLine(new string('\t', depth) + $"GetExportFor {dependency}");
                 var export = resolutionContext.GetExportFor(dependency);
                 if (export != null)
                 {
