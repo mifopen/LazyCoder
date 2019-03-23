@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using LazyCoder.CSharp;
 
 namespace LazyCoder.Typescript
 {
@@ -24,5 +25,6 @@ namespace LazyCoder.Typescript
 
         public TsTypeName TypeName { get; }
         public TsType[] TypeArguments { get; } = Array.Empty<TsType>();
+        public CsType CsType { get; set; }
     }
 }

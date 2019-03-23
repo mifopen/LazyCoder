@@ -9,12 +9,16 @@ namespace LazyCoder.Writers
                           TsFile tsFile)
         {
             var tsImports = tsFile.Imports
-                                  .Concat(tsFile.Declarations.SelectMany(ImportFinder.Find))
                                   .GroupBy(x => x.Path)
                                   .Select(x => new TsImport
                                                {
-                                                   Default = x.SingleOrDefault(y => !string.IsNullOrEmpty(y.Default))?.Default,
-                                                   Named = x.SelectMany(y => y.Named).Distinct().OrderBy(y => y),
+                                                   Default =
+                                                       x.SingleOrDefault(y =>
+                                                                             !string
+                                                                                 .IsNullOrEmpty(y.Default))
+                                                        ?.Default,
+                                                   Named = x.SelectMany(y => y.Named).Distinct()
+                                                            .OrderBy(y => y),
                                                    Path = x.Key
                                                })
                                   .ToArray();

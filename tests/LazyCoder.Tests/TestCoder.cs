@@ -8,7 +8,7 @@ namespace LazyCoder.Tests
 {
     public class TestCoder: ICoder
     {
-        public IEnumerable<TsFile> Rewrite(IEnumerable<CsType> types)
+        public IEnumerable<TsFile> Rewrite(IEnumerable<CsDeclaration> types)
         {
             return types
                    .OfType<CsEnum>()

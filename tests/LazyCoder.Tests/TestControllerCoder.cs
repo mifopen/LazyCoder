@@ -8,7 +8,7 @@ namespace LazyCoder.Tests
 {
     public class TestControllerCoder: ICoder
     {
-        public IEnumerable<TsFile> Rewrite(IEnumerable<CsType> types)
+        public IEnumerable<TsFile> Rewrite(IEnumerable<CsDeclaration> types)
         {
             var controllers = types.OfType<CsClass>().Where(x => x.Name.EndsWith("Controller"));
             return controllers.Select(RewriteController);

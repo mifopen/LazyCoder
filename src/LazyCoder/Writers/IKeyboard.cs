@@ -2,7 +2,7 @@ using System;
 
 namespace LazyCoder.Writers
 {
-    public interface IKeyboard
+    internal interface IKeyboard
     {
         IKeyboard Type(params string[] words);
 

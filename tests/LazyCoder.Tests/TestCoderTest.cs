@@ -8,7 +8,7 @@ namespace LazyCoder.Tests
         [Fact]
         public void Simple()
         {
-            var tsFiles = Runner.Convert(new[]
+            var tsFiles = Converter.Convert(new[]
                                      {
                                          typeof(SomeEnum),
                                          typeof(SomeController)

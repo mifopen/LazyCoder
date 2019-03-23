@@ -6,6 +6,6 @@ namespace LazyCoder
 {
     public interface ICoder
     {
-        IEnumerable<TsFile> Rewrite(IEnumerable<CsType> types);
+        IEnumerable<TsFile> Rewrite(IEnumerable<CsDeclaration> csDeclarations);
     }
 }

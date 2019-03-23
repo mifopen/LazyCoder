@@ -49,6 +49,12 @@ namespace LazyCoder.Writers
                 case TsUnionType tsUnionType:
                     Write(keyboard, tsUnionType);
                     break;
+                case TsArrayType tsArrayType:
+                    Write(keyboard, tsArrayType.ElementType);
+                    keyboard.Type("[]");
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(tsType), tsType.GetType().Name, null);
             }
         }
 
