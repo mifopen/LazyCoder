@@ -100,7 +100,7 @@ namespace LazyCoder
             throw new Exception($"Type {type.Name} from {type.Assembly.FullName} is unsupported");
         }
 
-        private static CsClassMember Create(MemberInfo memberInfo)
+        private static CsTypeMember Create(MemberInfo memberInfo)
         {
             switch (memberInfo)
             {

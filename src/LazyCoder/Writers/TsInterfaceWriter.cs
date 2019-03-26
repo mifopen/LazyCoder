@@ -1,3 +1,4 @@
+using System.Linq;
 using LazyCoder.Typescript;
 
 namespace LazyCoder.Writers
@@ -11,7 +12,7 @@ namespace LazyCoder.Writers
                     .Type("interface ", tsInterface.Name, " ");
             using (keyboard.Block())
             {
-                foreach (var tsInterfaceProperty in tsInterface.Properties)
+                foreach (var tsInterfaceProperty in tsInterface.Properties.OfType<TsPropertySignature>())
                 {
                     using (keyboard.Line())
                     {

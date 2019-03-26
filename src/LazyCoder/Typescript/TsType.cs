@@ -6,9 +6,10 @@ namespace LazyCoder.Typescript
 {
     public abstract class TsType
     {
-        public static TsType From(CsType csType)
+        public static TsType From(CsType csType,
+                                  bool forceNullable = false)
         {
-            return From(csType.OriginalType);
+            return From(csType.OriginalType, forceNullable);
         }
 
         private static readonly List<ICustomTypeConverter> customTypeConverters =
@@ -19,9 +20,10 @@ namespace LazyCoder.Typescript
             customTypeConverters.AddRange(converters);
         }
 
-        private static TsType From(Type type)
+        private static TsType From(Type type,
+                                   bool forceNullable = false)
         {
-            if (Helpers.IsNullable(type))
+            if (Helpers.IsNullable(type) || forceNullable)
             {
                 return new TsUnionType(From(Helpers.UnwrapNullable(type)),
                                        new TsNull());
@@ -37,7 +39,7 @@ namespace LazyCoder.Typescript
                 var arguments = type.GetGenericArguments();
                 var keyType = arguments[0];
                 var valueType = arguments[1];
-                var indexSignature = keyType == typeof(int)
+                var indexSignature = keyType.IsNumber()
                                          ? TsIndexSignature.ByNumber(From(valueType))
                                          : TsIndexSignature.ByString(From(valueType));
                 return new TsObjectType { Members = new[] { indexSignature } };
@@ -60,11 +62,7 @@ namespace LazyCoder.Typescript
                 return TsPredefinedType.Void();
             if (type == typeof(string))
                 return TsPredefinedType.String();
-            if (type == typeof(int)
-                || type == typeof(double)
-                || type == typeof(float)
-                || type == typeof(decimal)
-                || type == typeof(long))
+            if (type.IsNumber())
                 return TsPredefinedType.Number();
             if (type == typeof(bool))
                 return TsPredefinedType.Boolean();

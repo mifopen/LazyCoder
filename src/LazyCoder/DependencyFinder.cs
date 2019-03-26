@@ -30,7 +30,9 @@ namespace LazyCoder
                                      .Append(tsFunction.ReturnType);
                 case TsInterface tsInterface:
                     return tsInterface.Base
-                                      .Concat(tsInterface.Properties.Select(x => x.Type));
+                                      .Concat(tsInterface.Properties
+                                                         .OfType<TsPropertySignature>()
+                                                         .Select(x => x.Type));
                 case TsNamespace tsNamespace:
                     return tsNamespace.Declarations.SelectMany(FindInternal);
                 default:

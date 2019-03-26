@@ -5,12 +5,12 @@ namespace LazyCoder.CSharp
 {
     public class CsInterface: CsDeclaration
     {
-        public IEnumerable<CsClassMember> Members { get; set; } = Array.Empty<CsClassMember>();
+        public IEnumerable<CsTypeMember> Members { get; set; } = Array.Empty<CsTypeMember>();
         public IEnumerable<CsType> Generics { get; set; } = Array.Empty<CsType>();
     }
 
     public class CsStruct: CsDeclaration
     {
-        public IEnumerable<CsClassMember> Members { get; set; } = Array.Empty<CsClassMember>();
+        public IEnumerable<CsTypeMember> Members { get; set; } = Array.Empty<CsTypeMember>();
     }
 }

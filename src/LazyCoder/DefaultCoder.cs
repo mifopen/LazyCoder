@@ -5,7 +5,7 @@ using LazyCoder.Typescript;
 
 namespace LazyCoder
 {
-    internal static class DefaultCoder
+    public static class DefaultCoder
     {
         public static TsFile Rewrite(CsDeclaration csDeclaration)
         {
@@ -59,11 +59,7 @@ namespace LazyCoder
                        ExportKind = TsExportKind.Named,
                        Properties = csClass.Members
                                            .OfType<CsProperty>()
-                                           .Select(x => new TsPropertySignature
-                                                        {
-                                                            Name = x.Name,
-                                                            Type = TsType.From(x.Type)
-                                                        })
+                                           .Select(Rewrite)
                    };
         }
 
@@ -76,11 +72,7 @@ namespace LazyCoder
                        ExportKind = TsExportKind.Named,
                        Properties = csInterface.Members
                                                .OfType<CsProperty>()
-                                               .Select(x => new TsPropertySignature
-                                                            {
-                                                                Name = x.Name,
-                                                                Type = TsType.From(x.Type)
-                                                            })
+                                               .Select(Rewrite)
                    };
         }
 
@@ -93,12 +85,27 @@ namespace LazyCoder
                        ExportKind = TsExportKind.Named,
                        Properties = csStruct.Members
                                             .OfType<CsProperty>()
-                                            .Select(x => new TsPropertySignature
-                                                         {
-                                                             Name = x.Name,
-                                                             Type = TsType.From(x.Type)
-                                                         })
+                                            .Select(Rewrite)
                    };
+        }
+
+        private static TsTypeMember Rewrite(CsTypeMember csTypeMember)
+        {
+            switch (csTypeMember)
+            {
+                case CsProperty csProperty:
+                    var forceNullable = csProperty.Attributes
+                                                  .Any(a => a.Name.Contains("CanBeNull"));
+                    return new TsPropertySignature
+                           {
+                               Name = csProperty.Name,
+                               Type = TsType.From(csProperty.Type,
+                                                  forceNullable)
+                           };
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(csTypeMember),
+                                                          csTypeMember.GetType().Name, null);
+            }
         }
     }
 }
