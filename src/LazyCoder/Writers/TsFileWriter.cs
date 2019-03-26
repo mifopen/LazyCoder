@@ -36,6 +36,8 @@ namespace LazyCoder.Writers
             {
                 keyboard.Write(tsDeclaration);
             }
+
+            keyboard.EnsureNewLine();
         }
     }
 }

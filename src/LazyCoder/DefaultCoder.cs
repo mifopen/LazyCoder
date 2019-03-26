@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Linq;
 using LazyCoder.CSharp;
 using LazyCoder.Typescript;
@@ -13,12 +12,7 @@ namespace LazyCoder
             return new TsFile
                    {
                        Name = csDeclaration.Name,
-                       Directory = csDeclaration.Namespace
-                                                .Replace("Kontur.", "")
-                                                .Replace(csDeclaration.CsType.OriginalType.Assembly.GetName().Name,
-                                                         "")
-                                                .Trim('.')
-                                                .Replace('.', Path.DirectorySeparatorChar),
+                       Directory = Helpers.GetDirectory(csDeclaration),
                        Declarations = new[] { RewriteInternal(csDeclaration) }
                    };
         }
@@ -33,6 +27,8 @@ namespace LazyCoder
                     return Rewrite(csClass);
                 case CsInterface csInterface:
                     return Rewrite(csInterface);
+                case CsStruct csStruct:
+                    return Rewrite(csStruct);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(csDeclaration), csDeclaration,
                                                           null);
@@ -63,7 +59,7 @@ namespace LazyCoder
                        ExportKind = TsExportKind.Named,
                        Properties = csClass.Members
                                            .OfType<CsProperty>()
-                                           .Select(x => new TsInterfaceProperty
+                                           .Select(x => new TsPropertySignature
                                                         {
                                                             Name = x.Name,
                                                             Type = TsType.From(x.Type)
@@ -80,11 +76,28 @@ namespace LazyCoder
                        ExportKind = TsExportKind.Named,
                        Properties = csInterface.Members
                                                .OfType<CsProperty>()
-                                               .Select(x => new TsInterfaceProperty
+                                               .Select(x => new TsPropertySignature
                                                             {
                                                                 Name = x.Name,
                                                                 Type = TsType.From(x.Type)
                                                             })
+                   };
+        }
+
+        private static TsInterface Rewrite(CsStruct csStruct)
+        {
+            return new TsInterface
+                   {
+                       CsType = csStruct.CsType,
+                       Name = csStruct.Name,
+                       ExportKind = TsExportKind.Named,
+                       Properties = csStruct.Members
+                                            .OfType<CsProperty>()
+                                            .Select(x => new TsPropertySignature
+                                                         {
+                                                             Name = x.Name,
+                                                             Type = TsType.From(x.Type)
+                                                         })
                    };
         }
     }

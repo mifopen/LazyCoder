@@ -13,6 +13,7 @@ namespace LazyCoder.Writers
         IDisposable Line();
         IDisposable Block();
         IKeyboard NewLine();
+        IKeyboard EnsureNewLine();
         IKeyboard Indent();
     }
 }

@@ -6,6 +6,6 @@ namespace LazyCoder.Typescript
     public class TsInterface: TsDeclaration
     {
         public IEnumerable<TsType> Base { get; set; } = Array.Empty<TsType>();
-        public IEnumerable<TsInterfaceProperty> Properties { get; set; } = Array.Empty<TsInterfaceProperty>();
+        public IEnumerable<TsPropertySignature> Properties { get; set; } = Array.Empty<TsPropertySignature>();
     }
 }

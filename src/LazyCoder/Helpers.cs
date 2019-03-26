@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using LazyCoder.CSharp;
 
@@ -7,14 +8,6 @@ namespace LazyCoder
 {
     internal static class Helpers
     {
-        public static string GetTypeName(CsType type)
-        {
-            var genericParametersIndex = type.Name.IndexOf("`", StringComparison.InvariantCulture);
-            return genericParametersIndex == -1
-                       ? type.Name
-                       : type.Name.Substring(0, genericParametersIndex);
-        }
-
         public static bool IsNullable(Type type)
         {
             return type.IsGenericType
@@ -50,11 +43,6 @@ namespace LazyCoder
                        : type;
         }
 
-        public static string[] GetTypePath(CsType csType)
-        {
-            return csType.OriginalType.Namespace.Split(new[] { "." }, StringSplitOptions.None);
-        }
-
         public static string GetPathFromAToB(string[] a,
                                              string[] b)
         {
@@ -69,7 +57,7 @@ namespace LazyCoder
                                     : levelsToGoBackward == 0
                                         ? "./" + a.Last() + "/"
                                         : string.Join("", Enumerable.Repeat("../", times));
-            return (backwardSigns + string.Join("/", b.Skip(commonPrefixLength))).TrimEnd('/');
+            return ( backwardSigns + string.Join("/", b.Skip(commonPrefixLength)) ).TrimEnd('/');
         }
 
         public static IEnumerable<TSource> DistinctBy<TSource, TKey>(
@@ -84,6 +72,25 @@ namespace LazyCoder
                     yield return item;
                 }
             }
+        }
+
+        public static string GetDirectory(CsDeclaration csDeclaration)
+        {
+            var type = csDeclaration.CsType.OriginalType;
+            var assemblyName = type.Assembly.GetName().Name;
+            var parts = GetTypeFullName(type)
+                        .Replace($"Kontur.{assemblyName}.", "")
+                        .Replace("+", ".")
+                        .Split('.');
+            return Path.Combine(parts.Take(parts.Length - 1).ToArray());
+        }
+
+        private static string GetTypeFullName(Type type)
+        {
+            var genericParametersIndex = type.FullName.IndexOf("`");
+            return genericParametersIndex == -1
+                       ? type.FullName
+                       : type.FullName.Substring(0, genericParametersIndex);
         }
     }
 }

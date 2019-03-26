@@ -26,6 +26,13 @@ namespace LazyCoder.Writers
             return this;
         }
 
+        public IKeyboard EnsureNewLine()
+        {
+            if (sb[sb.Length - 1] != '\n')
+                NewLine();
+            return this;
+        }
+
         private IDisposable IncreaseIndent()
         {
             indentLevel++;
@@ -46,7 +53,8 @@ namespace LazyCoder.Writers
             return new ActionDisposable(() =>
                                         {
                                             unindent.Dispose();
-                                            Indent().Type("}").NewLine();
+                                            EnsureNewLine();
+                                            Indent().Type("}");
                                         });
         }
 

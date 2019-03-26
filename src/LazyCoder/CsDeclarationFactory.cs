@@ -35,7 +35,7 @@ namespace LazyCoder
                                         .Select(y => new CsEnumValue
                                                      {
                                                          Name = y.Name,
-                                                         Value = (int)y.GetRawConstantValue()
+                                                         Value = Convert.ToInt32(y.GetRawConstantValue())
                                                      })
                        };
             }
@@ -110,6 +110,7 @@ namespace LazyCoder
                     return Create(propertyInfo);
                 case TypeInfo _:
                 case FieldInfo _:
+                case EventInfo _:
                     return null;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(memberInfo),
@@ -126,6 +127,7 @@ namespace LazyCoder
                    {
                        Name = methodInfo.Name,
                        IsStatic = methodInfo.IsStatic,
+                       IsInherited = methodInfo.DeclaringType != methodInfo.ReflectedType,
                        AccessModifier = GetAccessModifier(methodInfo.IsPrivate,
                                                           methodInfo.IsFamily,
                                                           methodInfo.IsPublic,
@@ -151,6 +153,7 @@ namespace LazyCoder
                    {
                        Name = propertyInfo.Name,
                        IsStatic = getMethod.IsStatic,
+                       IsInherited = propertyInfo.DeclaringType != propertyInfo.ReflectedType,
                        AccessModifier = GetAccessModifier(getMethod.IsPrivate,
                                                           getMethod.IsFamily,
                                                           getMethod.IsPublic,

@@ -1,6 +1,6 @@
 using System;
+using System.Collections.Generic;
 using LazyCoder.CSharp;
-using LazyCoder.Writers;
 
 namespace LazyCoder.Typescript
 {
@@ -11,21 +11,47 @@ namespace LazyCoder.Typescript
             return From(csType.OriginalType);
         }
 
+        private static readonly List<ICustomTypeConverter> customTypeConverters =
+            new List<ICustomTypeConverter>();
+
+        internal static void RegisterCustomTypeConverters(ICustomTypeConverter[] converters)
+        {
+            customTypeConverters.AddRange(converters);
+        }
+
         private static TsType From(Type type)
         {
-            var tsType =
-                FromInternal(Helpers.UnwrapEnumerableType(Helpers
-                                                                  .UnwrapNullable(type)));
             if (Helpers.IsNullable(type))
-                return new TsUnionType(tsType, new TsNull());
+            {
+                return new TsUnionType(From(Helpers.UnwrapNullable(type)),
+                                       new TsNull());
+            }
 
             if (Helpers.IsEnumerable(type))
-                return new TsArrayType
-                       {
-                           ElementType = From(Helpers.UnwrapEnumerableType(type))
-                       };
+            {
+                return new TsArrayType { ElementType = From(Helpers.UnwrapEnumerableType(type)) };
+            }
 
-            return tsType;
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>))
+            {
+                var arguments = type.GetGenericArguments();
+                var keyType = arguments[0];
+                var valueType = arguments[1];
+                var indexSignature = keyType == typeof(int)
+                                         ? TsIndexSignature.ByNumber(From(valueType))
+                                         : TsIndexSignature.ByString(From(valueType));
+                return new TsObjectType { Members = new[] { indexSignature } };
+            }
+
+            foreach (var customTypeConverter in customTypeConverters)
+            {
+                if (customTypeConverter.TryConvert(type, out var tsType))
+                {
+                    return tsType;
+                }
+            }
+
+            return FromInternal(type);
         }
 
         private static TsType FromInternal(Type type)
@@ -46,6 +72,10 @@ namespace LazyCoder.Typescript
                 return TsPredefinedType.String();
             if (type == typeof(DateTime))
                 return new TsTypeReference("Date");
+            if (type == typeof(object))
+                return TsPredefinedType.Any();
+            if (type == typeof(Type))
+                return TsPredefinedType.String();
 
             return new TsTypeReference(type.Name) { CsType = new CsType(type) };
         }

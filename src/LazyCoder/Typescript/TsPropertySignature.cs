@@ -1,6 +1,6 @@
 namespace LazyCoder.Typescript
 {
-    public class TsInterfaceProperty
+    public class TsPropertySignature: TsTypeMember
     {
         public string Name { get; set; }
         public TsType Type { get; set; }

@@ -11,25 +11,35 @@ namespace LazyCoder
     public static class Converter
     {
         public static TsFile[] Convert(Type[] types,
-                                       ICoder[] coders)
+                                       ICoder[] coders,
+                                       ICustomTypeConverter[] customTypeConverters = null)
         {
+            if (customTypeConverters != null)
+                TsType.RegisterCustomTypeConverters(customTypeConverters);
+
             var csDeclarations = CsDeclarationFactory.Create(types).ToArray();
             var tsFiles = coders.SelectMany(coder => coder.Rewrite(csDeclarations))
+                                .Where(x => x.Declarations.Any())
                                 .ToArray();
             var resolutionContext = new ResolutionContext();
             var tsFilesToWrite = EnsureDependencies(tsFiles, resolutionContext);
             return tsFilesToWrite.Concat(resolutionContext.DependencyTsFiles).ToArray();
         }
 
-        public static void WriteFile(string outputDirectory,
-                                     TsFile tsFile)
+        // todo same folder different case
+        public static string WriteFile(string outputDirectory,
+                                       TsFile tsFile)
         {
-            var directory = Path.Combine(Path.GetFullPath(outputDirectory), tsFile.Directory);
+            var directory = string.IsNullOrEmpty(tsFile.Directory) || tsFile.Directory == "."
+                                ? Path.GetFullPath(outputDirectory)
+                                : Path.Combine(Path.GetFullPath(outputDirectory), tsFile.Directory);
             Directory.CreateDirectory(directory);
             var writerContext = new WriterContext();
             writerContext.Write(tsFile);
             var content = writerContext.GetResult();
-            File.WriteAllText(Path.Combine(directory, tsFile.Name + ".ts"), content);
+            var filePath = Path.Combine(directory, tsFile.Name + ".ts");
+            File.WriteAllText(filePath, content);
+            return filePath;
         }
 
         private static TsFile[] EnsureDependencies(TsFile[] tsFiles,

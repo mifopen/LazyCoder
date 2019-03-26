@@ -36,7 +36,8 @@ namespace LazyCoder.Writers
                             keyboard.Type("void");
                             break;
                         default:
-                            throw new ArgumentOutOfRangeException(nameof(tsPredefinedType), tsPredefinedType.Get(), null);
+                            throw new ArgumentOutOfRangeException(nameof(tsPredefinedType),
+                                                                  tsPredefinedType.Get(), null);
                     }
 
                     break;
@@ -49,12 +50,16 @@ namespace LazyCoder.Writers
                 case TsUnionType tsUnionType:
                     Write(keyboard, tsUnionType);
                     break;
+                case TsObjectType tsObjectType:
+                    Write(keyboard, tsObjectType);
+                    break;
                 case TsArrayType tsArrayType:
                     Write(keyboard, tsArrayType.ElementType);
                     keyboard.Type("[]");
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(tsType), tsType.GetType().Name, null);
+                    throw new ArgumentOutOfRangeException(nameof(tsType), tsType.GetType().Name,
+                                                          null);
             }
         }
 
@@ -76,7 +81,10 @@ namespace LazyCoder.Writers
             {
                 keyboard.TypeJoin(".",
                                   tsTypeReference.TypeName.Namespace
-                                                 .Concat(new[] { tsTypeReference.TypeName.Identifier })
+                                                 .Concat(new[]
+                                                         {
+                                                             tsTypeReference.TypeName.Identifier
+                                                         })
                                                  .ToArray());
             }
             else
@@ -86,15 +94,42 @@ namespace LazyCoder.Writers
 
             if (tsTypeReference.TypeArguments.Length > 0)
             {
-                keyboard.Write("<");
+                keyboard.Type("<");
                 for (var i = 0; i < tsTypeReference.TypeArguments.Length; i++)
                 {
                     Write(keyboard, tsTypeReference.TypeArguments[i]);
                     if (i != tsTypeReference.TypeArguments.Length - 1)
-                        keyboard.Write(", ");
+                        keyboard.Type(", ");
                 }
 
-                keyboard.Write(">");
+                keyboard.Type(">");
+            }
+        }
+
+        private void Write(IKeyboard keyboard,
+                           TsObjectType tsObjectType)
+        {
+            using (keyboard.Block())
+            {
+                foreach (var tsTypeMember in tsObjectType.Members)
+                {
+                    switch (tsTypeMember)
+                    {
+                        case TsIndexSignature tsIndexSignature:
+                            keyboard.Indent()
+                                    .Type("[key: ")
+                                    .Write(tsIndexSignature.IndexType)
+                                    .Type("]: ")
+                                    .Write(tsIndexSignature.ValueType)
+                                    .Type(";");
+                            break;
+                        case TsPropertySignature tsPropertySignature:
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(tsTypeMember),
+                                                                  tsTypeMember.GetType().Name,
+                                                                  null);
+                    }
+                }
             }
         }
     }
