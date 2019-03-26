@@ -10,7 +10,9 @@ namespace LazyCoder.Writers
                           TsFunction tsFunction)
         {
             keyboard.Write(tsFunction.ExportKind)
-                    .Type("function ", tsFunction.Name, "(");
+                    .Type("function ")
+                    .Write(new TsIdentifier(tsFunction.Name))
+                    .Type("(");
             var parameters = tsFunction.Parameters.ToArray();
             for (var i = 0; i < parameters.Length; i++)
             {
@@ -31,7 +33,8 @@ namespace LazyCoder.Writers
             keyboard.Type(" ");
             using (keyboard.Block())
             {
-                var bodyLines = tsFunction.Body.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+                var bodyLines =
+                    tsFunction.Body.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
                 foreach (var bodyLine in bodyLines)
                 {
                     using (keyboard.Line())
