@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using LazyCoder.CSharp;
 
@@ -54,6 +55,14 @@ namespace LazyCoder.Typescript
                                         .ToArray();
                 return new TsTypeReference(Helpers.GetName(type),
                                            typeArguments) { CsType = new CsType(type) };
+            }
+
+            if (type == typeof(NameValueCollection))
+            {
+                return new TsObjectType
+                       {
+                           Members = new[] { TsIndexSignature.ByString(TsPredefinedType.String()) }
+                       };
             }
 
             foreach (var customTypeConverter in customTypeConverters)
