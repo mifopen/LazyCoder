@@ -101,6 +101,7 @@ namespace LazyCoder
         {
             return dependencies
                    .Select(d => new { Dependency = d, Export = GetExportFor(d) })
+                   .Where(x => x.Export != null)
                    .Select(x => new TsImport
                                 {
                                     Named = new[] { x.Export.Name },
@@ -119,6 +120,9 @@ namespace LazyCoder
                 }
 
                 var csDeclaration = CsDeclarationFactory.Create(dependency.CsType.OriginalType);
+                if (csDeclaration == null)
+                    return null;
+
                 var tsFile = DefaultCoder.Rewrite(csDeclaration);
                 var tsFiles = EnsureDependencies(new[] { tsFile }, resolutionContext);
                 resolutionContext.AddFiles(tsFiles);

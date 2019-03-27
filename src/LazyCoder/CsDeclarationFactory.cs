@@ -76,10 +76,20 @@ namespace LazyCoder
             var isStruct = type.IsValueType && !type.IsEnum && !type.IsPrimitive;
             if (isStruct)
             {
-                return new CsStruct(type);
+                return new CsStruct(type)
+                       {
+                           Members = type.GetDefinition()
+                                         .GetMembers()
+                                         .Where(m => !typeof(object)
+                                                      .GetMembers()
+                                                      .Select(me => me.Name)
+                                                      .Contains(m.Name))
+                                         .Select(Create)
+                                         .Where(x => x != null)
+                       };
             }
 
-            throw new Exception($"Type {type.Name} from {type.Assembly.FullName} is unsupported");
+            return null;
         }
 
         private static CsTypeMember Create(MemberInfo memberInfo)
