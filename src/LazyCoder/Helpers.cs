@@ -77,11 +77,7 @@ namespace LazyCoder
         public static string GetDirectory(CsDeclaration csDeclaration)
         {
             var type = csDeclaration.CsType.OriginalType;
-            var assemblyName = type.Assembly.GetName().Name;
-            var parts = GetFullName(type)
-                        .Replace($"Kontur.{assemblyName}.", "")
-                        .Replace("+", ".")
-                        .Split('.');
+            var parts = GetFullName(type).Replace("+", ".").Split('.');
             return Path.Combine(parts.Take(parts.Length - 1).ToArray());
         }
 
