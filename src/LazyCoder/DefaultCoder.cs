@@ -59,6 +59,7 @@ namespace LazyCoder
                        ExportKind = TsExportKind.Named,
                        TypeParameters = csClass.TypeParameters,
                        Properties = csClass.Members
+                                           .Where(x => !x.IsStatic)
                                            .OfType<CsProperty>()
                                            .Select(Rewrite)
                    };
@@ -73,6 +74,7 @@ namespace LazyCoder
                        ExportKind = TsExportKind.Named,
                        TypeParameters = csInterface.TypeParameters,
                        Properties = csInterface.Members
+                                               .Where(x => !x.IsStatic)
                                                .OfType<CsProperty>()
                                                .Select(Rewrite)
                    };
@@ -86,6 +88,7 @@ namespace LazyCoder
                        Name = csStruct.Name,
                        ExportKind = TsExportKind.Named,
                        Properties = csStruct.Members
+                                            .Where(x => !x.IsStatic)
                                             .OfType<CsProperty>()
                                             .Select(Rewrite)
                    };
