@@ -23,6 +23,12 @@ namespace LazyCoder.Typescript
             TypeArguments = typeArguments;
         }
 
+        public TsTypeReference(string typeName,
+                               TsType[] typeArguments)
+            : this(new TsTypeName(typeName), typeArguments)
+        {
+        }
+
         public TsTypeName TypeName { get; }
         public TsType[] TypeArguments { get; } = Array.Empty<TsType>();
         public CsType CsType { get; set; }

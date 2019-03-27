@@ -14,7 +14,8 @@ namespace LazyCoder
                    .SelectMany(Unwrap)
                    .OfType<TsTypeReference>()
                    .Select(x => x.CsType)
-                   .Where(x => x != null);
+                   .Where(x => x != null)
+                   .Where(x => !x.OriginalType.IsGenericParameter);
         }
 
         private static IEnumerable<TsType> FindInternal(TsDeclaration tsDeclaration)

@@ -9,10 +9,25 @@ namespace LazyCoder.Writers
                           TsInterface tsInterface)
         {
             keyboard.Write(tsInterface.ExportKind)
-                    .Type("interface ", tsInterface.Name, " ");
+                    .Type("interface ", tsInterface.Name);
+            if (tsInterface.TypeParameters.Any())
+            {
+                keyboard.Type("<");
+                for (var i = 0; i < tsInterface.TypeParameters.Length; i++)
+                {
+                    keyboard.Type(tsInterface.TypeParameters[i]);
+                    if (i != tsInterface.TypeParameters.Length - 1)
+                        keyboard.Type(", ");
+                }
+
+                keyboard.Type(">");
+            }
+
+            keyboard.Type(" ");
             using (keyboard.Block())
             {
-                foreach (var tsInterfaceProperty in tsInterface.Properties.OfType<TsPropertySignature>())
+                foreach (var tsInterfaceProperty in tsInterface
+                                                    .Properties.OfType<TsPropertySignature>())
                 {
                     using (keyboard.Line())
                     {

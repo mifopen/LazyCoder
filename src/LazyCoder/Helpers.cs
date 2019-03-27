@@ -36,7 +36,7 @@ namespace LazyCoder
             return type;
         }
 
-        private static Type GetDefinition(this Type type)
+        public static Type GetDefinition(this Type type)
         {
             return type.IsGenericType && !type.IsGenericTypeDefinition
                        ? type.GetGenericTypeDefinition()
@@ -78,19 +78,31 @@ namespace LazyCoder
         {
             var type = csDeclaration.CsType.OriginalType;
             var assemblyName = type.Assembly.GetName().Name;
-            var parts = GetTypeFullName(type)
+            var parts = GetFullName(type)
                         .Replace($"Kontur.{assemblyName}.", "")
                         .Replace("+", ".")
                         .Split('.');
             return Path.Combine(parts.Take(parts.Length - 1).ToArray());
         }
 
-        private static string GetTypeFullName(Type type)
+        public static string GetName(Type type)
         {
-            var genericParametersIndex = type.FullName.IndexOf("`");
+            return CleanTypeName(type.Name);
+        }
+
+        private static string GetFullName(Type type)
+        {
+            if (type.FullName == null)
+                throw new Exception($"{type}");
+            return CleanTypeName(type.FullName);
+        }
+
+        private static string CleanTypeName(string name)
+        {
+            var genericParametersIndex = name.IndexOf("`");
             return genericParametersIndex == -1
-                       ? type.FullName
-                       : type.FullName.Substring(0, genericParametersIndex);
+                       ? name
+                       : name.Substring(0, genericParametersIndex);
         }
 
         public static bool IsNumber(this Type type)

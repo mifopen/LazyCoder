@@ -57,6 +57,7 @@ namespace LazyCoder
                        CsType = csClass.CsType,
                        Name = csClass.Name,
                        ExportKind = TsExportKind.Named,
+                       TypeParameters = csClass.TypeParameters,
                        Properties = csClass.Members
                                            .OfType<CsProperty>()
                                            .Select(Rewrite)
@@ -70,6 +71,7 @@ namespace LazyCoder
                        CsType = csInterface.CsType,
                        Name = csInterface.Name,
                        ExportKind = TsExportKind.Named,
+                       TypeParameters = csInterface.TypeParameters,
                        Properties = csInterface.Members
                                                .OfType<CsProperty>()
                                                .Select(Rewrite)

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using LazyCoder.CSharp;
 
 namespace LazyCoder.Typescript
@@ -34,15 +35,25 @@ namespace LazyCoder.Typescript
                 return new TsArrayType { ElementType = From(Helpers.UnwrapEnumerableType(type)) };
             }
 
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>))
+            if (type.IsGenericType)
             {
-                var arguments = type.GetGenericArguments();
-                var keyType = arguments[0];
-                var valueType = arguments[1];
-                var indexSignature = keyType.IsNumber()
-                                         ? TsIndexSignature.ByNumber(From(valueType))
-                                         : TsIndexSignature.ByString(From(valueType));
-                return new TsObjectType { Members = new[] { indexSignature } };
+                if (type.GetGenericTypeDefinition() == typeof(Dictionary<,>)
+                    || type.GetGenericTypeDefinition() == typeof(IDictionary<,>))
+                {
+                    var arguments = type.GetGenericArguments();
+                    var keyType = arguments[0];
+                    var valueType = arguments[1];
+                    var indexSignature = keyType.IsNumber()
+                                             ? TsIndexSignature.ByNumber(From(valueType))
+                                             : TsIndexSignature.ByString(From(valueType));
+                    return new TsObjectType { Members = new[] { indexSignature } };
+                }
+
+                var typeArguments = type.GetGenericArguments()
+                                        .Select(x => From(x))
+                                        .ToArray();
+                return new TsTypeReference(Helpers.GetName(type),
+                                           typeArguments) { CsType = new CsType(type) };
             }
 
             foreach (var customTypeConverter in customTypeConverters)
@@ -75,7 +86,7 @@ namespace LazyCoder.Typescript
             if (type == typeof(Type))
                 return TsPredefinedType.String();
 
-            return new TsTypeReference(type.Name) { CsType = new CsType(type) };
+            return new TsTypeReference(Helpers.GetName(type)) { CsType = new CsType(type) };
         }
     }
 }

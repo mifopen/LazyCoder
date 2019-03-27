@@ -6,7 +6,6 @@ using LazyCoder.CSharp;
 
 namespace LazyCoder
 {
-    //todo cyclic ast
     internal static class CsDeclarationFactory
     {
         public static IEnumerable<CsDeclaration> Create(IEnumerable<Type> types)
@@ -18,43 +17,32 @@ namespace LazyCoder
         {
             if (type.IsEnum)
             {
-                return new CsEnum
+                return new CsEnum(type)
                        {
-                           CsType = new CsType(type),
-                           Name = type.Name,
-                           Namespace = type.Namespace,
-                           Attributes = type.CustomAttributes
-                                            .Select(x => new CsAttribute
-                                                         {
-                                                             Name = x.AttributeType.Name,
-                                                             OriginalType = x.AttributeType
-                                                         })
-                                            .ToArray(),
                            Values = type.GetFields()
                                         .Where(f => f.Name != "value__")
                                         .Select(y => new CsEnumValue
                                                      {
                                                          Name = y.Name,
-                                                         Value = Convert.ToInt32(y.GetRawConstantValue())
+                                                         Value =
+                                                             Convert
+                                                                 .ToInt32(y.GetRawConstantValue())
                                                      })
                        };
             }
 
             if (type.IsClass)
             {
-                return new CsClass
+                return new CsClass(type)
                        {
-                           CsType = new CsType(type),
-                           Name = type.Name,
-                           Namespace = type.Namespace,
-                           Attributes = type.CustomAttributes
-                                            .Select(x => new CsAttribute
-                                                         {
-                                                             Name = x.AttributeType.Name,
-                                                             OriginalType = x.AttributeType
-                                                         })
-                                            .ToArray(),
-                           Members = type.GetMembers()
+                           TypeParameters = type.IsGenericType
+                                                ? type.GetGenericTypeDefinition()
+                                                      .GetGenericArguments()
+                                                      .Select(x => x.Name)
+                                                      .ToArray()
+                                                : Array.Empty<string>(),
+                           Members = type.GetDefinition()
+                                         .GetMembers()
                                          .Where(m => !typeof(object)
                                                       .GetMembers()
                                                       .Select(me => me.Name)
@@ -66,19 +54,16 @@ namespace LazyCoder
 
             if (type.IsInterface)
             {
-                return new CsInterface
+                return new CsInterface(type)
                        {
-                           CsType = new CsType(type),
-                           Name = type.Name,
-                           Namespace = type.Namespace,
-                           Attributes = type.CustomAttributes
-                                            .Select(x => new CsAttribute
-                                                         {
-                                                             Name = x.AttributeType.Name,
-                                                             OriginalType = x.AttributeType
-                                                         })
-                                            .ToArray(),
-                           Members = type.GetMembers()
+                           TypeParameters = type.IsGenericType
+                                                ? type.GetGenericTypeDefinition()
+                                                      .GetGenericArguments()
+                                                      .Select(x => x.Name)
+                                                      .ToArray()
+                                                : Array.Empty<string>(),
+                           Members = type.GetDefinition()
+                                         .GetMembers()
                                          .Where(m => !typeof(object)
                                                       .GetMembers()
                                                       .Select(me => me.Name)
@@ -91,10 +76,7 @@ namespace LazyCoder
             var isStruct = type.IsValueType && !type.IsEnum && !type.IsPrimitive;
             if (isStruct)
             {
-                return new CsStruct
-                       {
-                           CsType = new CsType(type), Name = type.Name, Namespace = type.Namespace
-                       };
+                return new CsStruct(type);
             }
 
             throw new Exception($"Type {type.Name} from {type.Assembly.FullName} is unsupported");
