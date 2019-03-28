@@ -82,6 +82,7 @@ class Build: NukeBuild
                                               .SetWorkingDirectory(RootDirectory)
                                               .SetPackageLicenseUrl(licenseUrl)
                                               .SetProject(Solution.Path)
+                                              .SetRepositoryUrl("https://github.com/mifopen/LazyCoder")
                                               .EnableNoBuild()
                                               .SetConfiguration(Configuration)
                                               .EnableIncludeSymbols()
