@@ -88,6 +88,7 @@ class Build: NukeBuild
                                               .SetOutputDirectory(ArtifactsDirectory)
                                               .SetDescription("Writes Typescript for you")
                                               .SetAuthors("mif")
+                                              .SetPackageTags("typescript", "generator")
                                               .SetVersion(GitVersion.NuGetVersionV2));
                           });
 
