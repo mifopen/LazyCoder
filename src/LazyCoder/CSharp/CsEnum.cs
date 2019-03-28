@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace LazyCoder.CSharp
 {
@@ -9,6 +8,6 @@ namespace LazyCoder.CSharp
         {
         }
 
-        public IEnumerable<CsEnumValue> Values { get; set; }
+        public CsEnumValue[] Values { get; set; } = Array.Empty<CsEnumValue>();
     }
 }

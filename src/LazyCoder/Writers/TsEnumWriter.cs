@@ -33,6 +33,8 @@ namespace LazyCoder.Writers
                     }
                 }
             }
+
+            keyboard.NewLine();
         }
     }
 }

@@ -1,12 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace LazyCoder.CSharp
 {
     public abstract class CsDeclaration
     {
-        public CsDeclaration(Type type)
+        protected CsDeclaration(Type type)
         {
             Name = Helpers.GetName(type);
             Namespace = type.Namespace;
@@ -20,9 +19,9 @@ namespace LazyCoder.CSharp
                              .ToArray();
         }
 
-        public string Name { get; set; }
-        public string Namespace { get; set; }
-        public IEnumerable<CsAttribute> Attributes { get; set; } = Array.Empty<CsAttribute>();
-        public CsType CsType { get; set; }
+        public string Name { get; }
+        public string Namespace { get; }
+        public CsAttribute[] Attributes { get; } = Array.Empty<CsAttribute>();
+        public CsType CsType { get; }
     }
 }

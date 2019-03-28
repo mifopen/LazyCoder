@@ -1,9 +1,9 @@
-using System.Collections.Generic;
+using System;
 
 namespace LazyCoder.Typescript
 {
     public class TsNamespace: TsDeclaration
     {
-        public IEnumerable<TsDeclaration> Declarations { get; set; }
+        public TsDeclaration[] Declarations { get; set; } = Array.Empty<TsDeclaration>();
     }
 }

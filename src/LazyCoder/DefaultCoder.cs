@@ -47,6 +47,7 @@ namespace LazyCoder
                                                    {
                                                        Name = x.Name, Value = x.Value
                                                    })
+                                      .ToArray()
                    };
         }
 
@@ -62,6 +63,7 @@ namespace LazyCoder
                                            .Where(x => !x.IsStatic)
                                            .OfType<CsProperty>()
                                            .Select(Rewrite)
+                                           .ToArray()
                    };
         }
 
@@ -77,6 +79,7 @@ namespace LazyCoder
                                                .Where(x => !x.IsStatic)
                                                .OfType<CsProperty>()
                                                .Select(Rewrite)
+                                               .ToArray()
                    };
         }
 
@@ -91,6 +94,7 @@ namespace LazyCoder
                                             .Where(x => !x.IsStatic)
                                             .OfType<CsProperty>()
                                             .Select(Rewrite)
+                                            .ToArray()
                    };
         }
 

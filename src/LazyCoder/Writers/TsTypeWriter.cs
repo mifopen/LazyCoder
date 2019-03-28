@@ -123,7 +123,6 @@ namespace LazyCoder.Writers
                                     .Write(tsIndexSignature.ValueType)
                                     .Type(";");
                             break;
-                        case TsPropertySignature tsPropertySignature:
                         default:
                             throw new ArgumentOutOfRangeException(nameof(tsTypeMember),
                                                                   tsTypeMember.GetType().Name,

@@ -19,7 +19,8 @@ namespace LazyCoder.Writers
                                                                                  .IsNullOrEmpty(y.Default))
                                                         ?.Default,
                                                    Named = x.SelectMany(y => y.Named).Distinct()
-                                                            .OrderBy(y => y),
+                                                            .OrderBy(y => y)
+                                                            .ToArray(),
                                                    Path = GetPath(x.Key.Path,
                                                                   x.Key
                                                                    .RelativeToOutputDirectoryPath,
@@ -36,17 +37,19 @@ namespace LazyCoder.Writers
                 keyboard.NewLine();
             }
 
-            foreach (var tsDeclaration in tsFile.Declarations)
+            for (var i = 0; i < tsFile.Declarations.Length; i++)
             {
-                keyboard.Write(tsDeclaration);
+                keyboard.Write(tsFile.Declarations[i]);
+                if (i != tsFile.Declarations.Length - 1)
+                    keyboard.NewLine();
             }
 
             keyboard.EnsureNewLine();
         }
 
-        private string GetPath(string path,
-                               string relativeToOutputDirectoryPath,
-                               TsFile tsFile)
+        private static string GetPath(string path,
+                                      string relativeToOutputDirectoryPath,
+                                      TsFile tsFile)
         {
             if (!string.IsNullOrEmpty(path))
                 return path;

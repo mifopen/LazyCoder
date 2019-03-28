@@ -8,9 +8,11 @@ namespace LazyCoder
 {
     internal static class CsDeclarationFactory
     {
-        public static IEnumerable<CsDeclaration> Create(IEnumerable<Type> types)
+        public static CsDeclaration[] Create(IEnumerable<Type> types)
         {
-            return types.Select(Create).Where(x => x != null);
+            return types.Select(Create)
+                        .Where(x => x != null)
+                        .ToArray();
         }
 
         public static CsDeclaration Create(Type type)
@@ -28,6 +30,7 @@ namespace LazyCoder
                                                              Convert
                                                                  .ToInt32(y.GetRawConstantValue())
                                                      })
+                                        .ToArray()
                        };
             }
 
@@ -49,6 +52,7 @@ namespace LazyCoder
                                                       .Contains(m.Name))
                                          .Select(Create)
                                          .Where(x => x != null)
+                                         .ToArray()
                        };
             }
 
@@ -70,6 +74,7 @@ namespace LazyCoder
                                                       .Contains(m.Name))
                                          .Select(Create)
                                          .Where(x => x != null)
+                                         .ToArray()
                        };
             }
 
@@ -86,6 +91,7 @@ namespace LazyCoder
                                                       .Contains(m.Name))
                                          .Select(Create)
                                          .Where(x => x != null)
+                                         .ToArray()
                        };
             }
 
@@ -133,7 +139,8 @@ namespace LazyCoder
                                               .ToArray(),
                        ReturnType = new CsType(methodInfo.ReturnType),
                        Parameters = methodInfo.GetParameters()
-                                              .Select(Create),
+                                              .Select(Create)
+                                              .ToArray(),
                        OriginalMethod = methodInfo
                    };
         }
@@ -141,6 +148,9 @@ namespace LazyCoder
         private static CsProperty Create(PropertyInfo propertyInfo)
         {
             var getMethod = propertyInfo.GetGetMethod();
+            if (getMethod == null)
+                return null;
+
             return new CsProperty
                    {
                        Name = propertyInfo.Name,

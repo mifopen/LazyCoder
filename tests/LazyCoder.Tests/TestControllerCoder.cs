@@ -20,7 +20,8 @@ namespace LazyCoder.Tests
             return new TsFile
                    {
                        Name = name,
-                       Directory = controllerType.Namespace.Replace('.', Path.DirectorySeparatorChar),
+                       Directory =
+                           controllerType.Namespace.Replace('.', Path.DirectorySeparatorChar),
                        Declarations = new[]
                                       {
                                           new TsNamespace
@@ -30,9 +31,11 @@ namespace LazyCoder.Tests
                                               Declarations = controllerType
                                                              .Members
                                                              .OfType<CsMethod>()
-                                                             .Where(x => x.AccessModifier == CsAccessModifier.Public
+                                                             .Where(x => x.AccessModifier ==
+                                                                         CsAccessModifier.Public
                                                                          && !x.IsStatic)
                                                              .Select(RewriteMethod)
+                                                             .ToArray()
                                           }
                                       }
                    };
@@ -48,9 +51,9 @@ namespace LazyCoder.Tests
                        Parameters = method.Parameters
                                           .Select(x => new TsFunctionParameter
                                                        {
-                                                           Name = x.Name,
-                                                           Type = TsType.From(x.Type)
-                                                       }),
+                                                           Name = x.Name, Type = TsType.From(x.Type)
+                                                       })
+                                          .ToArray(),
                        Body = "// some body"
                    };
         }

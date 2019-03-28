@@ -51,7 +51,7 @@ namespace LazyCoder
             {
                 var dependencies = GetDependencies(tsFile);
                 var imports = Resolve(dependencies, resolutionContext);
-                tsFile.Imports = tsFile.Imports.Concat(imports);
+                tsFile.Imports = tsFile.Imports.Concat(imports).ToArray();
             }
 
             return tsFiles.ToArray();

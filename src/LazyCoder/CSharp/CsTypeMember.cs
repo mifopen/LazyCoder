@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace LazyCoder.CSharp
 {
@@ -9,6 +8,6 @@ namespace LazyCoder.CSharp
         public bool IsStatic { get; set; }
         public bool IsInherited { get; set; }
         public CsAccessModifier AccessModifier { get; set; }
-        public IEnumerable<CsAttribute> Attributes { get; set; } = Array.Empty<CsAttribute>();
+        public CsAttribute[] Attributes { get; set; } = Array.Empty<CsAttribute>();
     }
 }

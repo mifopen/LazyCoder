@@ -20,6 +20,8 @@ namespace LazyCoder.Writers
                         keyboard.NewLine();
                 }
             }
+
+            keyboard.NewLine();
         }
     }
 }

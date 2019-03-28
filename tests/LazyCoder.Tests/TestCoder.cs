@@ -15,7 +15,8 @@ namespace LazyCoder.Tests
                    .Select(x => new TsFile
                                 {
                                     Name = x.Name,
-                                    Directory = x.Namespace.Replace('.', Path.DirectorySeparatorChar),
+                                    Directory =
+                                        x.Namespace.Replace('.', Path.DirectorySeparatorChar),
                                     Declarations = new[]
                                                    {
                                                        new TsEnum
@@ -23,11 +24,14 @@ namespace LazyCoder.Tests
                                                            Name = x.Name,
                                                            ExportKind = TsExportKind.Named,
                                                            Values = x.Values
-                                                                     .Select(y => new TsEnumNumberValue
-                                                                                  {
-                                                                                      Name = y.Name,
-                                                                                      Value = y.Value
-                                                                                  })
+                                                                     .Select(y =>
+                                                                                 new
+                                                                                 TsEnumNumberValue
+                                                                                 {
+                                                                                     Name = y.Name,
+                                                                                     Value = y.Value
+                                                                                 })
+                                                                     .ToArray()
                                                        }
                                                    }
                                 });

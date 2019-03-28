@@ -41,6 +41,8 @@ namespace LazyCoder.Writers
                         keyboard.Type(bodyLine);
                 }
             }
+
+            keyboard.NewLine();
         }
     }
 }
