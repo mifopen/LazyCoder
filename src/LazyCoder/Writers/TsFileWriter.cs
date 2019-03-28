@@ -1,3 +1,4 @@
+using System.IO;
 using System.Linq;
 using LazyCoder.Typescript;
 
@@ -9,7 +10,7 @@ namespace LazyCoder.Writers
                           TsFile tsFile)
         {
             var tsImports = tsFile.Imports
-                                  .GroupBy(x => x.Path)
+                                  .GroupBy(x => ( x.Path, x.RelativeToOutputDirectoryPath ))
                                   .Select(x => new TsImport
                                                {
                                                    Default =
@@ -19,7 +20,10 @@ namespace LazyCoder.Writers
                                                         ?.Default,
                                                    Named = x.SelectMany(y => y.Named).Distinct()
                                                             .OrderBy(y => y),
-                                                   Path = x.Key
+                                                   Path = GetPath(x.Key.Path,
+                                                                  x.Key
+                                                                   .RelativeToOutputDirectoryPath,
+                                                                  tsFile)
                                                })
                                   .ToArray();
             foreach (var tsImport in tsImports)
@@ -38,6 +42,18 @@ namespace LazyCoder.Writers
             }
 
             keyboard.EnsureNewLine();
+        }
+
+        private string GetPath(string path,
+                               string relativeToOutputDirectoryPath,
+                               TsFile tsFile)
+        {
+            if (!string.IsNullOrEmpty(path))
+                return path;
+
+            return Helpers.GetPathFromAToB(tsFile.Directory.Split(Path.DirectorySeparatorChar),
+                                           relativeToOutputDirectoryPath
+                                               .Split(Path.DirectorySeparatorChar));
         }
     }
 }
