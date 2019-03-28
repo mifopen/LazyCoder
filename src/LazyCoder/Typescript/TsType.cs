@@ -36,6 +36,11 @@ namespace LazyCoder.Typescript
                 return new TsArrayType { ElementType = From(Helpers.UnwrapEnumerableType(type)) };
             }
 
+            if (typeof(Delegate).IsAssignableFrom(type))
+            {
+                return TsPredefinedType.Any();
+            }
+
             if (type.IsGenericType)
             {
                 if (type.GetGenericTypeDefinition() == typeof(Dictionary<,>)
