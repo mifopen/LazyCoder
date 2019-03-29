@@ -34,12 +34,17 @@ namespace LazyCoder
                                 ? Path.GetFullPath(outputDirectory)
                                 : Path.Combine(Path.GetFullPath(outputDirectory), tsFile.Directory);
             Directory.CreateDirectory(directory);
-            var writerContext = new WriterContext();
-            writerContext.Write(tsFile);
-            var content = writerContext.GetResult();
+            var content = WriteFileToString(tsFile);
             var filePath = Path.Combine(directory, tsFile.Name + ".ts");
             File.WriteAllText(filePath, content);
             return filePath;
+        }
+
+        public static string WriteFileToString(TsFile tsFile)
+        {
+            var writerContext = new WriterContext();
+            writerContext.Write(tsFile);
+            return writerContext.GetResult();
         }
 
         private static TsFile[] EnsureDependencies(TsFile[] tsFiles,
