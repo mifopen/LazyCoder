@@ -119,6 +119,7 @@ class Build: NukeBuild
                 .Requires(() => LocalNugetSource)
                 .Executes(() =>
                           {
+                              EnsureExistingDirectory(LocalNugetSource);
                               GlobFiles(ArtifactsDirectory, "*.nupkg")
                                   .NotEmpty()
                                   .Where(x => !x.EndsWith(".symbols.nupkg"))
