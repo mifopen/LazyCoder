@@ -149,7 +149,15 @@ namespace LazyCoder
         {
             var getMethod = propertyInfo.GetGetMethod();
             if (getMethod == null)
+            {
                 return null;
+            }
+
+            // ignoring overridden props
+            if (getMethod != getMethod.GetBaseDefinition())
+            {
+                return null;
+            }
 
             return new CsProperty
                    {

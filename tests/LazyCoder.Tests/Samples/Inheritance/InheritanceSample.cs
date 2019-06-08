@@ -32,6 +32,7 @@ namespace LazyCoder.Tests.Samples.Inheritance
             Converter.WriteFileToString(tsFiles.Single(x => x.Name == "BaseClass"))
                      .ShouldBeLines("export interface BaseClass {",
                                     "    BaseProperty: string;",
+                                    "    AbstractProperty: string;",
                                     "}",
                                     "");
 
@@ -56,11 +57,13 @@ namespace LazyCoder.Tests.Samples.Inheritance
         private abstract class BaseClass
         {
             public string BaseProperty { get; set; }
+            public abstract string AbstractProperty { get; set; }
         }
 
         private class ChildClass: BaseClass
         {
             public string ChildProperty { get; set; }
+            public override string AbstractProperty { get; set; }
         }
 
         private class GrandChildClass: ChildClass
