@@ -18,10 +18,14 @@ class Build: NukeBuild
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration =
-        IsLocalBuild ? Configuration.Debug : Configuration.Release;
+        IsLocalBuild
+            ? Configuration.Debug
+            : Configuration.Release;
 
     [Parameter("NuGet api key")] readonly string ApiKey;
     readonly string LicenseFile = RootDirectory / "LICENSE";
+
+    [Parameter("Local nuget source")] readonly string LocalNugetSourse;
 
     [Solution] readonly Solution Solution;
     [GitRepository] readonly GitRepository GitRepository;
@@ -112,6 +116,7 @@ class Build: NukeBuild
     Target PublishLocal
         => _ => _
                 .DependsOn(Pack)
+                .Requires(() => LocalNugetSourse)
                 .Executes(() =>
                           {
                               GlobFiles(ArtifactsDirectory, "*.nupkg")
@@ -119,6 +124,6 @@ class Build: NukeBuild
                                   .Where(x => !x.EndsWith(".symbols.nupkg"))
                                   .ForEach(x => DotNetNuGetPush(s => s
                                                                      .SetTargetPath(x)
-                                                                     .SetSource("/Users/mif/Documents/GitHub/localnuget")));
+                                                                     .SetSource(LocalNugetSourse)));
                           });
 }
