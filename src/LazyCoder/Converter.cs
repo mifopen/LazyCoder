@@ -21,14 +21,45 @@ namespace LazyCoder
                 TsType.RegisterCustomTypeConverters(customTypeConverters);
             }
 
+            defaultCoder = defaultCoder ?? new DefaultCoder();
+
             var csDeclarations = CsDeclarationFactory.Create(types).ToArray();
             var tsFiles = coders.SelectMany(coder => coder.Rewrite(csDeclarations))
                                 .Where(x => x.Declarations.Any())
                                 .ToArray();
+            tsFiles = tsFiles.Concat(Expand(defaultCoder, tsFiles, csDeclarations)).ToArray();
             var resolutionContext = new ResolutionContext();
-            defaultCoder = defaultCoder ?? new DefaultCoder();
             var tsFilesToWrite = EnsureDependencies(defaultCoder, tsFiles, resolutionContext);
             return tsFilesToWrite.Concat(resolutionContext.DependencyTsFiles).ToArray();
+        }
+
+        private static TsFile[] Expand(ICoder defaultCoder,
+                                       TsFile[] tsFiles,
+                                       CsDeclaration[] csDeclarations)
+        {
+            var children = tsFiles.SelectMany(x => x.Declarations)
+                                  .Select(d =>
+                                          {
+                                              switch (d)
+                                              {
+                                                  case TsInterface tsInterface:
+                                                      return tsInterface.CsType.OriginalType;
+                                                  case TsClass tsClass:
+                                                      return tsClass.CsType.OriginalType;
+                                                  default:
+                                                      return null;
+                                              }
+                                          })
+                                  .Where(t => t != null)
+                                  .SelectMany(x =>
+                                                  csDeclarations.Where(y =>
+                                                                           x != y
+                                                                                .CsType
+                                                                                .OriginalType
+                                                                           &&
+                                                                           x.IsAssignableFrom(y.CsType
+                                                                                               .OriginalType)));
+            return defaultCoder.Rewrite(children).ToArray();
         }
 
         // todo same folder different case
@@ -67,7 +98,6 @@ namespace LazyCoder
 
             return tsFiles.ToArray();
         }
-
 
         private static Export[] GetExports(TsFile tsFile)
         {
