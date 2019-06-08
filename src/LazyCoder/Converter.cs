@@ -10,19 +10,24 @@ namespace LazyCoder
 {
     public static class Converter
     {
-        public static TsFile[] Convert(Type[] types,
-                                       ICoder[] coders,
-                                       ICustomTypeConverter[] customTypeConverters = null)
+        public static TsFile[] Convert(IEnumerable<Type> types,
+                                       IEnumerable<ICoder> coders,
+                                       ICoder defaultCoder = null,
+                                       IEnumerable<ICustomTypeConverter> customTypeConverters =
+                                           null)
         {
             if (customTypeConverters != null)
+            {
                 TsType.RegisterCustomTypeConverters(customTypeConverters);
+            }
 
             var csDeclarations = CsDeclarationFactory.Create(types).ToArray();
             var tsFiles = coders.SelectMany(coder => coder.Rewrite(csDeclarations))
                                 .Where(x => x.Declarations.Any())
                                 .ToArray();
             var resolutionContext = new ResolutionContext();
-            var tsFilesToWrite = EnsureDependencies(tsFiles, resolutionContext);
+            defaultCoder = defaultCoder ?? new DefaultCoder();
+            var tsFilesToWrite = EnsureDependencies(defaultCoder, tsFiles, resolutionContext);
             return tsFilesToWrite.Concat(resolutionContext.DependencyTsFiles).ToArray();
         }
 
@@ -47,7 +52,8 @@ namespace LazyCoder
             return writerContext.GetResult();
         }
 
-        private static TsFile[] EnsureDependencies(TsFile[] tsFiles,
+        private static TsFile[] EnsureDependencies(ICoder defaultCoder,
+                                                   TsFile[] tsFiles,
                                                    ResolutionContext
                                                        baseResolutionContext)
         {
@@ -55,7 +61,7 @@ namespace LazyCoder
             foreach (var tsFile in tsFiles)
             {
                 var dependencies = GetDependencies(tsFile);
-                var imports = Resolve(dependencies, resolutionContext);
+                var imports = Resolve(defaultCoder, dependencies, resolutionContext);
                 tsFile.Imports = tsFile.Imports.Concat(imports).ToArray();
             }
 
@@ -76,7 +82,10 @@ namespace LazyCoder
                     case TsClass _:
                     case TsInterface _:
                     case TsEnum _:
-                        return new[] { new Export(tsDeclaration, tsFile) };
+                        return new[]
+                               {
+                                   new Export(tsDeclaration, tsFile)
+                               };
                     case TsFunction _:
                         return Array.Empty<Export>();
                     case TsNamespace tsNamespace:
@@ -101,15 +110,22 @@ namespace LazyCoder
                          .ToArray();
         }
 
-        private static TsImport[] Resolve(Dependency[] dependencies,
+        private static TsImport[] Resolve(ICoder defaultCoder,
+                                          Dependency[] dependencies,
                                           ResolutionContext resolutionContext)
         {
             return dependencies
-                   .Select(d => new { Dependency = d, Export = GetExportFor(d) })
+                   .Select(d => new
+                                {
+                                    Dependency = d, Export = GetExportFor(d)
+                                })
                    .Where(x => x.Export != null)
                    .Select(x => new TsImport
                                 {
-                                    Named = new[] { x.Export.Name },
+                                    Named = new[]
+                                            {
+                                                x.Export.Name
+                                            },
                                     Path = Helpers.GetPathFromAToB(x.Dependency.Path,
                                                                    x.Export.Path)
                                            + "/" + x.Export.Name
@@ -126,10 +142,15 @@ namespace LazyCoder
 
                 var csDeclaration = CsDeclarationFactory.Create(dependency.CsType.OriginalType);
                 if (csDeclaration == null)
+                {
                     return null;
+                }
 
-                var tsFile = DefaultCoder.Rewrite(csDeclaration);
-                var tsFiles = EnsureDependencies(new[] { tsFile }, resolutionContext);
+                var tsFiles = defaultCoder.Rewrite(new[]
+                                                   {
+                                                       csDeclaration
+                                                   });
+                tsFiles = EnsureDependencies(defaultCoder, tsFiles.ToArray(), resolutionContext);
                 resolutionContext.AddFiles(tsFiles);
                 return resolutionContext.GetExportFor(dependency);
             }

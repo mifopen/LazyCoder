@@ -17,7 +17,7 @@ namespace LazyCoder.Typescript
         private static readonly List<ICustomTypeConverter> customTypeConverters =
             new List<ICustomTypeConverter>();
 
-        internal static void RegisterCustomTypeConverters(ICustomTypeConverter[] converters)
+        internal static void RegisterCustomTypeConverters(IEnumerable<ICustomTypeConverter> converters)
         {
             customTypeConverters.AddRange(converters);
         }

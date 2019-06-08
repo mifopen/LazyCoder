@@ -1,12 +1,18 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using LazyCoder.CSharp;
 using LazyCoder.Typescript;
 
 namespace LazyCoder
 {
-    public abstract class BaseCoder
+    public abstract class BaseCoder: ICoder
     {
+        public IEnumerable<TsFile> Rewrite(IEnumerable<CsDeclaration> csDeclarations)
+        {
+            return csDeclarations.Select(Rewrite);
+        }
+
         public virtual TsFile Rewrite(CsDeclaration csDeclaration)
         {
             return new TsFile
