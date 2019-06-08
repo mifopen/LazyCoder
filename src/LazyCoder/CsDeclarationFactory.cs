@@ -45,7 +45,7 @@ namespace LazyCoder
                                                       .ToArray()
                                                 : Array.Empty<string>(),
                            Members = type.GetDefinition()
-                                         .GetMembers()
+                                         .GetMembers(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
                                          .Where(m => !typeof(object)
                                                       .GetMembers()
                                                       .Select(me => me.Name)
@@ -67,7 +67,7 @@ namespace LazyCoder
                                                       .ToArray()
                                                 : Array.Empty<string>(),
                            Members = type.GetDefinition()
-                                         .GetMembers()
+                                         .GetMembers(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
                                          .Where(m => !typeof(object)
                                                       .GetMembers()
                                                       .Select(me => me.Name)

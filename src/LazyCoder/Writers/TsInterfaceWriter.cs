@@ -24,6 +24,20 @@ namespace LazyCoder.Writers
             }
 
             keyboard.Type(" ");
+
+            if (tsInterface.Base.Any())
+            {
+                keyboard.Type("extends ");
+                for (var i = 0; i < tsInterface.Base.Length; i++)
+                {
+                    keyboard.Write(tsInterface.Base[i]);
+                    if (i != tsInterface.Base.Length - 1)
+                        keyboard.Type(", ");
+                }
+
+                keyboard.Type(" ");
+            }
+
             using (keyboard.Block())
             {
                 foreach (var tsInterfaceProperty in tsInterface

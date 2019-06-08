@@ -73,6 +73,13 @@ namespace LazyCoder
                        Name = csClass.Name,
                        ExportKind = TsExportKind.Named,
                        TypeParameters = csClass.TypeParameters,
+                       Base = csClass.CsType.OriginalType.BaseType == typeof(object)
+                                  ? Array.Empty<TsType>()
+                                  : new[]
+                                    {
+                                        TsType.From(new CsType(csClass.CsType.OriginalType
+                                                                      .BaseType))
+                                    },
                        Properties = csClass.Members
                                            .Where(x => !x.IsStatic)
                                            .OfType<CsProperty>()

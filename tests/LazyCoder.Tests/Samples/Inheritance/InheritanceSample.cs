@@ -28,6 +28,20 @@ namespace LazyCoder.Tests.Samples.Inheritance
                                  "BaseClass", "ChildClass", "GrandChildClass"
                              },
                              ignoreOrder: true);
+
+            Converter.WriteFileToString(tsFiles.Single(x => x.Name == "BaseClass"))
+                     .ShouldBeLines("export interface BaseClass {",
+                                    "    BaseProperty: string;",
+                                    "}",
+                                    "");
+
+            Converter.WriteFileToString(tsFiles.Single(x => x.Name == "ChildClass"))
+                     .ShouldBeLines("import { BaseClass } from \"./BaseClass\";",
+                                    "",
+                                    "export interface ChildClass extends BaseClass {",
+                                    "    ChildProperty: string;",
+                                    "}",
+                                    "");
         }
 
         private class AbstractOnlyCoder: ICoder
@@ -41,14 +55,17 @@ namespace LazyCoder.Tests.Samples.Inheritance
 
         private abstract class BaseClass
         {
+            public string BaseProperty { get; set; }
         }
 
         private class ChildClass: BaseClass
         {
+            public string ChildProperty { get; set; }
         }
 
         private class GrandChildClass: ChildClass
         {
+            public string GrandChildProperty { get; set; }
         }
     }
 }
