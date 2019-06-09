@@ -21,45 +21,15 @@ namespace LazyCoder
                 TsType.RegisterCustomTypeConverters(customTypeConverters);
             }
 
-            defaultCoder = defaultCoder ?? new DefaultCoder();
-
             var csDeclarations = CsDeclarationFactory.Create(types).ToArray();
-            var tsFiles = coders.SelectMany(coder => coder.Rewrite(csDeclarations))
-                                .Where(x => x.Declarations.Any())
-                                .ToArray();
-            tsFiles = tsFiles.Concat(Expand(defaultCoder, tsFiles, csDeclarations)).ToArray();
-            var resolutionContext = new ResolutionContext();
-            var tsFilesToWrite = EnsureDependencies(defaultCoder, tsFiles, resolutionContext);
-            return tsFilesToWrite.Concat(resolutionContext.DependencyTsFiles).ToArray();
-        }
 
-        private static TsFile[] Expand(ICoder defaultCoder,
-                                       TsFile[] tsFiles,
-                                       CsDeclaration[] csDeclarations)
-        {
-            var children = tsFiles.SelectMany(x => x.Declarations)
-                                  .Select(d =>
-                                          {
-                                              switch (d)
-                                              {
-                                                  case TsInterface tsInterface:
-                                                      return tsInterface.CsType.OriginalType;
-                                                  case TsClass tsClass:
-                                                      return tsClass.CsType.OriginalType;
-                                                  default:
-                                                      return null;
-                                              }
-                                          })
-                                  .Where(t => t != null)
-                                  .SelectMany(x =>
-                                                  csDeclarations.Where(y =>
-                                                                           x != y
-                                                                                .CsType
-                                                                                .OriginalType
-                                                                           &&
-                                                                           x.IsAssignableFrom(y.CsType
-                                                                                               .OriginalType)));
-            return defaultCoder.Rewrite(children).ToArray();
+            var writtenTsFiles = coders.SelectMany(coder => coder.Rewrite(csDeclarations))
+                                       .Where(x => x.Declarations.Any())
+                                       .ToArray();
+
+            return FixBuild(writtenTsFiles,
+                            defaultCoder ?? new DefaultCoder(),
+                            csDeclarations);
         }
 
         // todo same folder different case
@@ -83,176 +53,213 @@ namespace LazyCoder
             return writerContext.GetResult();
         }
 
-        private static TsFile[] EnsureDependencies(ICoder defaultCoder,
-                                                   TsFile[] tsFiles,
-                                                   ResolutionContext
-                                                       baseResolutionContext)
+        private static TsFile[] FixBuild(TsFile[] tsFiles,
+                                         ICoder defaultCoder,
+                                         CsDeclaration[] csDeclarations)
         {
-            var resolutionContext = baseResolutionContext.Add(tsFiles.SelectMany(GetExports));
+            var exportRegistry = new ExportRegistry();
+
             foreach (var tsFile in tsFiles)
             {
-                var dependencies = GetDependencies(tsFile);
-                var imports = Resolve(defaultCoder, dependencies, resolutionContext);
-                tsFile.Imports = tsFile.Imports.Concat(imports).ToArray();
+                exportRegistry.Register(tsFile);
             }
 
-            return tsFiles.ToArray();
-        }
-
-        private static Export[] GetExports(TsFile tsFile)
-        {
-            return tsFile.Declarations
-                         .SelectMany(GetExports)
-                         .ToArray();
-
-            IEnumerable<Export> GetExports(TsDeclaration tsDeclaration)
+            var generatedFiles = new List<TsFile>();
+            var filesToFix = new Stack<TsFile>(tsFiles);
+            while (filesToFix.Count > 0)
             {
-                switch (tsDeclaration)
+                var fileToFix = filesToFix.Pop();
+
+                // 1. Generating and auto importing external types
+                var externals = FindExternals(fileToFix);
+                foreach (var csType in externals)
                 {
-                    case TsClass _:
-                    case TsInterface _:
-                    case TsEnum _:
-                        return new[]
-                               {
-                                   new Export(tsDeclaration, tsFile)
-                               };
-                    case TsFunction _:
-                        return Array.Empty<Export>();
-                    case TsNamespace tsNamespace:
-                        return tsNamespace.Declarations.SelectMany(GetExports);
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(tsDeclaration),
-                                                              tsDeclaration.GetType().Name,
-                                                              null);
+                    if (!exportRegistry.TryGetExport(csType, out var export))
+                    {
+                        Generate(csType);
+
+                        if (!exportRegistry.TryGetExport(csType, out export))
+                        {
+                            throw new Exception($"Can not find Export for {csType}");
+                        }
+                    }
+
+                    if (export.TsFile != fileToFix)
+                    {
+                        AutoImport(fileToFix, export);
+                    }
+                }
+
+                // 2. Generating derived types
+                var derivedTypes = FindDerivedTypes(externals, csDeclarations);
+                foreach (var csType in derivedTypes)
+                {
+                    if (!exportRegistry.TryGetExport(csType, out _))
+                    {
+                        Generate(csType);
+                    }
                 }
             }
+
+            void Generate(CsType csType)
+            {
+                var csDeclaration = CsDeclarationFactory.Create(csType.OriginalType);
+                var autoGeneratedTsFiles = defaultCoder.Rewrite(new[]
+                                                                {
+                                                                    csDeclaration
+                                                                });
+                foreach (var autoGeneratedTsFile in autoGeneratedTsFiles)
+                {
+                    exportRegistry.Register(autoGeneratedTsFile);
+                    filesToFix.Push(autoGeneratedTsFile);
+                    generatedFiles.Add(autoGeneratedTsFile);
+                }
+            }
+
+            return tsFiles.Concat(generatedFiles).ToArray();
         }
 
-        private static Dependency[] GetDependencies(TsFile tsFile)
+        private static void AutoImport(TsFile tsFile, Export export)
         {
-            var exports = GetExports(tsFile);
+            var tsImport = new TsImport
+                           {
+                               Named = new[]
+                                       {
+                                           export.Name
+                                       },
+                               Path = Helpers.GetPathFromAToB(DirectoryToPath(tsFile.Directory),
+                                                              DirectoryToPath(export
+                                                                              .TsFile.Directory))
+                                      + "/" + export.Name
+                           };
+            tsFile.Import(tsImport);
+        }
+
+        private static CsType[] FindExternals(TsFile tsFile)
+        {
             return tsFile.Declarations
                          .SelectMany(DependencyFinder.Find)
-                         .Where(x => !exports.Select(y => y.CsType.OriginalType)
-                                             .Contains(x.OriginalType))
-                         .Select(x => new Dependency(x, tsFile))
-                         .DistinctBy(x => x.CsType.OriginalType)
+                         .Distinct()
                          .ToArray();
         }
 
-        private static TsImport[] Resolve(ICoder defaultCoder,
-                                          Dependency[] dependencies,
-                                          ResolutionContext resolutionContext)
+        private static CsType[] FindDerivedTypes(CsType[] csTypes, CsDeclaration[] csDeclarations)
         {
-            return dependencies
-                   .Select(d => new
-                                {
-                                    Dependency = d, Export = GetExportFor(d)
-                                })
-                   .Where(x => x.Export != null)
-                   .Select(x => new TsImport
-                                {
-                                    Named = new[]
-                                            {
-                                                x.Export.Name
-                                            },
-                                    Path = Helpers.GetPathFromAToB(x.Dependency.Path,
-                                                                   x.Export.Path)
-                                           + "/" + x.Export.Name
-                                })
-                   .ToArray();
-
-            Export GetExportFor(Dependency dependency)
-            {
-                var export = resolutionContext.GetExportFor(dependency);
-                if (export != null)
-                {
-                    return export;
-                }
-
-                var csDeclaration = CsDeclarationFactory.Create(dependency.CsType.OriginalType);
-                if (csDeclaration == null)
-                {
-                    return null;
-                }
-
-                var tsFiles = defaultCoder.Rewrite(new[]
-                                                   {
-                                                       csDeclaration
-                                                   });
-                tsFiles = EnsureDependencies(defaultCoder, tsFiles.ToArray(), resolutionContext);
-                resolutionContext.AddFiles(tsFiles);
-                return resolutionContext.GetExportFor(dependency);
-            }
+            return csTypes.SelectMany(x => csDeclarations
+                                           .Select(y => y.CsType)
+                                           .Where(y => x != y &&
+                                                       x.OriginalType
+                                                        .IsAssignableFrom(y.OriginalType)))
+                          .ToArray();
         }
 
-        private class ResolutionContext
-        {
-            private readonly List<Export> exports = new List<Export>();
 
-            public List<TsFile> DependencyTsFiles { get; } = new List<TsFile>();
-
-            public Export GetExportFor(Dependency dependency)
-            {
-                return exports.SingleOrDefault(e => e.CsType.OriginalType ==
-                                                    dependency.CsType.OriginalType);
-            }
-
-            public ResolutionContext Add(IEnumerable<Export> newExports)
-            {
-                exports.AddRange(newExports);
-                return this;
-            }
-
-            public void AddFiles(IEnumerable<TsFile> tsFiles)
-            {
-                DependencyTsFiles.AddRange(tsFiles);
-            }
-        }
-
-        private class Export
-        {
-            public Export(TsDeclaration tsDeclaration,
-                          TsFile tsFile)
-            {
-                Path = DirectoryToPath(tsFile.Directory);
-                CsType = tsDeclaration.CsType;
-                Name = tsDeclaration.Name;
-            }
-
-            public string Name { get; }
-            public CsType CsType { get; }
-            public string[] Path { get; }
-
-            public override string ToString()
-            {
-                return Name;
-            }
-        }
-
-        private class Dependency
-        {
-            public Dependency(CsType csType,
-                              TsFile tsFile)
-            {
-                CsType = csType;
-                Path = DirectoryToPath(tsFile.Directory);
-            }
-
-            public CsType CsType { get; }
-            public string[] Path { get; }
-
-            public override string ToString()
-            {
-                return CsType.ToString();
-            }
-        }
+        //        private static TsFile[] Expand(ICoder defaultCoder,
+//                                       TsFile[] tsFiles,
+//                                       CsDeclaration[] csDeclarations)
+//        {
+//            var children = tsFiles.SelectMany(x => x.Declarations)
+//                                  .Select(d =>
+//                                          {
+//                                              switch (d)
+//                                              {
+//                                                  case TsInterface tsInterface:
+//                                                      return tsInterface.CsType.OriginalType;
+//                                                  case TsClass tsClass:
+//                                                      return tsClass.CsType.OriginalType;
+//                                                  default:
+//                                                      return null;
+//                                              }
+//                                          })
+//                                  .Where(t => t != null)
+//                                  .SelectMany(x =>
+//                                                  csDeclarations.Where(y =>
+//                                                                           x != y
+//                                                                                .CsType
+//                                                                                .OriginalType
+//                                                                           &&
+//                                                                           x.IsAssignableFrom(y.CsType
+//                                                                                               .OriginalType)));
+//            return defaultCoder.Rewrite(children).ToArray();
+//        }
 
         private static string[] DirectoryToPath(string directory)
         {
             return string.IsNullOrEmpty(directory) || directory == "."
                        ? Array.Empty<string>()
                        : directory.Split(Path.DirectorySeparatorChar);
+        }
+
+        private class ExportRegistry
+        {
+            private readonly Dictionary<CsType, Export> exports =
+                new Dictionary<CsType, Export>();
+
+            public void Register(TsFile tsFile)
+            {
+                foreach (var tsDeclaration in tsFile.Declarations)
+                {
+                    Register(tsFile, tsDeclaration);
+                }
+            }
+
+            public bool TryGetExport(CsType csType, out Export export)
+            {
+                return exports.TryGetValue(csType, out export);
+            }
+
+            private void Register(TsFile tsFile, TsDeclaration tsDeclaration)
+            {
+                switch (tsDeclaration)
+                {
+                    case TsClass _:
+                    case TsInterface _:
+                    case TsEnum _:
+                        Add(new Export(tsDeclaration, tsFile));
+                        break;
+                    case TsFunction _:
+                        break;
+                    case TsNamespace tsNamespace:
+                        foreach (var declaration in tsNamespace.Declarations)
+                        {
+                            Register(tsFile, declaration);
+                        }
+
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(tsDeclaration),
+                                                              tsDeclaration.GetType().Name,
+                                                              null);
+                }
+            }
+
+            private void Add(Export export)
+            {
+                if (!exports.ContainsKey(export.CsType))
+                {
+                    exports.Add(export.CsType, export);
+                }
+            }
+        }
+
+        private class Export
+        {
+            public Export(TsDeclaration tsDeclaration, TsFile tsFile)
+            {
+                if (tsDeclaration.CsType == null)
+                {
+                    throw new
+                        Exception($"Can not create export for {tsDeclaration.Name} with unknown CsType");
+                }
+
+                CsType = tsDeclaration.CsType;
+                Name = tsDeclaration.Name;
+                TsFile = tsFile;
+            }
+
+            public CsType CsType { get; }
+            public string Name { get; }
+            public TsFile TsFile { get; }
         }
     }
 }

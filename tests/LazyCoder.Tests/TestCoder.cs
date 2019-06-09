@@ -21,6 +21,7 @@ namespace LazyCoder.Tests
                                                    {
                                                        new TsEnum
                                                        {
+                                                           CsType = x.CsType,
                                                            Name = x.Name,
                                                            ExportKind = TsExportKind.Named,
                                                            Values = x.Values

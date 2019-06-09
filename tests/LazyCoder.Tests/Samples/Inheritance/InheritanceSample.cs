@@ -14,20 +14,28 @@ namespace LazyCoder.Tests.Samples.Inheritance
         {
             var tsFiles = Converter.Convert(new[]
                                             {
-                                                typeof(BaseClass), typeof(ChildClass),
-                                                typeof(GrandChildClass)
+                                                typeof(Contract), typeof(BaseClass),
+                                                typeof(ChildClass), typeof(GrandChildClass)
                                             },
                                             new[]
                                             {
-                                                new AbstractOnlyCoder()
+                                                new ContractCoder()
                                             });
 
             tsFiles.Select(x => x.Name)
                    .ShouldBe(new[]
                              {
-                                 "BaseClass", "ChildClass", "GrandChildClass"
+                                 "Contract", "BaseClass", "ChildClass", "GrandChildClass"
                              },
                              ignoreOrder: true);
+
+            Converter.WriteFileToString(tsFiles.Single(x => x.Name == "Contract"))
+                     .ShouldBeLines("import { BaseClass } from \"./BaseClass\";",
+                                    "",
+                                    "export interface Contract {",
+                                    "    BaseClass: BaseClass;",
+                                    "}",
+                                    "");
 
             Converter.WriteFileToString(tsFiles.Single(x => x.Name == "BaseClass"))
                      .ShouldBeLines("export interface BaseClass {",
@@ -43,15 +51,28 @@ namespace LazyCoder.Tests.Samples.Inheritance
                                     "    ChildProperty: string;",
                                     "}",
                                     "");
+
+            Converter.WriteFileToString(tsFiles.Single(x => x.Name == "GrandChildClass"))
+                     .ShouldBeLines("import { ChildClass } from \"./ChildClass\";",
+                                    "",
+                                    "export interface GrandChildClass extends ChildClass {",
+                                    "    GrandChildProperty: string;",
+                                    "}",
+                                    "");
         }
 
-        private class AbstractOnlyCoder: ICoder
+        private class ContractCoder: ICoder
         {
             public IEnumerable<TsFile> Rewrite(IEnumerable<CsDeclaration> csDeclarations)
             {
-                return csDeclarations.Where(x => x.CsType.OriginalType.IsAbstract)
+                return csDeclarations.Where(x => x.CsType.OriginalType == typeof(Contract))
                                      .Select(x => new DefaultCoder().Rewrite(x));
             }
+        }
+
+        private class Contract
+        {
+            public BaseClass BaseClass { get; set; }
         }
 
         private abstract class BaseClass

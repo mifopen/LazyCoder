@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace LazyCoder.Typescript
 {
@@ -8,5 +9,10 @@ namespace LazyCoder.Typescript
         public string Directory { get; set; }
         public TsImport[] Imports { get; set; } = Array.Empty<TsImport>();
         public TsDeclaration[] Declarations { get; set; } = Array.Empty<TsDeclaration>();
+
+        public void Import(TsImport tsImport)
+        {
+            Imports = Imports.Append(tsImport).ToArray();
+        }
     }
 }

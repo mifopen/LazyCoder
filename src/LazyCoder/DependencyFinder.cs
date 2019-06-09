@@ -51,7 +51,10 @@ namespace LazyCoder
                 case TsUnionType tsUnionType:
                     return tsUnionType.Types.SelectMany(Unwrap);
                 case TsArrayType tsArrayType:
-                    return new[] { tsArrayType.ElementType };
+                    return new[]
+                           {
+                               tsArrayType.ElementType
+                           };
                 case TsObjectType tsObjectType:
                     return tsObjectType.Members
                                        .Select(UnwrapTsTypeMember)
@@ -63,7 +66,10 @@ namespace LazyCoder
                 case TsNull _:
                 case TsPredefinedType _:
                 case TsStringLiteralType _:
-                    return new[] { tsType };
+                    return new[]
+                           {
+                               tsType
+                           };
                 default:
                     throw new ArgumentOutOfRangeException(nameof(tsType),
                                                           tsType.GetType().Name,
