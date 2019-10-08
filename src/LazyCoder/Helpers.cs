@@ -88,9 +88,7 @@ namespace LazyCoder
 
         private static string GetFullName(Type type)
         {
-            if (type.FullName == null)
-                throw new Exception($"{type}");
-            return CleanTypeName(type.FullName);
+            return CleanTypeName(type.ToString());
         }
 
         private static string CleanTypeName(string name)
