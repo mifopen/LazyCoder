@@ -51,10 +51,7 @@ namespace LazyCoder
                 case TsUnionType tsUnionType:
                     return tsUnionType.Types.SelectMany(Unwrap);
                 case TsArrayType tsArrayType:
-                    return new[]
-                           {
-                               tsArrayType.ElementType
-                           };
+                    return Unwrap(tsArrayType.ElementType);
                 case TsObjectType tsObjectType:
                     return tsObjectType.Members
                                        .Select(UnwrapTsTypeMember)
