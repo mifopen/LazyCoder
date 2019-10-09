@@ -83,6 +83,12 @@ namespace LazyCoder
             {
                 return new CsStruct(type)
                        {
+                           TypeParameters = type.IsGenericType
+                                                ? type.GetGenericTypeDefinition()
+                                                      .GetGenericArguments()
+                                                      .Select(x => x.Name)
+                                                      .ToArray()
+                                                : Array.Empty<string>(),
                            Members = type.GetDefinition()
                                          .GetMembers()
                                          .Where(m => !typeof(object)

@@ -111,6 +111,7 @@ namespace LazyCoder
                        CsType = csStruct.CsType,
                        Name = csStruct.Name,
                        ExportKind = TsExportKind.Named,
+                       TypeParameters = csStruct.TypeParameters,
                        Properties = csStruct.Members
                                             .Where(x => !x.IsStatic)
                                             .OfType<CsProperty>()

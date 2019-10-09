@@ -9,5 +9,6 @@ namespace LazyCoder.CSharp
         }
 
         public CsTypeMember[] Members { get; set; } = Array.Empty<CsTypeMember>();
+        public string[] TypeParameters { get; set; } = Array.Empty<string>();
     }
 }
