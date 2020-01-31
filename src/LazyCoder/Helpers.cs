@@ -26,9 +26,8 @@ namespace LazyCoder
             return type != typeof(string)
                    && ( type.IsArray
                         || type.GetDefinition() == typeof(IEnumerable<>)
-                        || type.GetInterfaces()
-                               .Select(GetDefinition)
-                               .Any(i => i == typeof(IEnumerable<>)) );
+                        || type.GetDefinition() == typeof(List<>)
+                        || type.GetDefinition() == typeof(IList<>) );
         }
 
         public static Type UnwrapEnumerableType(Type type)
@@ -36,9 +35,8 @@ namespace LazyCoder
             if (type.IsArray)
                 return type.GetElementType();
             if (type.GetDefinition() == typeof(IEnumerable<>)
-                || type.GetInterfaces()
-                       .Select(GetDefinition)
-                       .Any(i => i == typeof(IEnumerable<>)))
+                || type.GetDefinition() == typeof(List<>)
+                || type.GetDefinition() == typeof(IList<>))
                 return type.GetGenericArguments().Single();
             return type;
         }
