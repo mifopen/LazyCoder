@@ -23,15 +23,22 @@ namespace LazyCoder
 
         public static bool IsEnumerable(Type type)
         {
-            return type.IsArray ||
-                   type.IsGenericType && type.GetDefinition() == typeof(IEnumerable<>);
+            return type != typeof(string)
+                   && ( type.IsArray
+                        || type.GetDefinition() == typeof(IEnumerable<>)
+                        || type.GetInterfaces()
+                               .Select(GetDefinition)
+                               .Any(i => i == typeof(IEnumerable<>)) );
         }
 
         public static Type UnwrapEnumerableType(Type type)
         {
             if (type.IsArray)
                 return type.GetElementType();
-            if (type.IsGenericType && type.GetDefinition() == typeof(IEnumerable<>))
+            if (type.GetDefinition() == typeof(IEnumerable<>)
+                || type.GetInterfaces()
+                       .Select(GetDefinition)
+                       .Any(i => i == typeof(IEnumerable<>)))
                 return type.GetGenericArguments().Single();
             return type;
         }
