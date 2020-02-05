@@ -153,36 +153,6 @@ namespace LazyCoder
                           .ToArray();
         }
 
-
-        //        private static TsFile[] Expand(ICoder defaultCoder,
-//                                       TsFile[] tsFiles,
-//                                       CsDeclaration[] csDeclarations)
-//        {
-//            var children = tsFiles.SelectMany(x => x.Declarations)
-//                                  .Select(d =>
-//                                          {
-//                                              switch (d)
-//                                              {
-//                                                  case TsInterface tsInterface:
-//                                                      return tsInterface.CsType.OriginalType;
-//                                                  case TsClass tsClass:
-//                                                      return tsClass.CsType.OriginalType;
-//                                                  default:
-//                                                      return null;
-//                                              }
-//                                          })
-//                                  .Where(t => t != null)
-//                                  .SelectMany(x =>
-//                                                  csDeclarations.Where(y =>
-//                                                                           x != y
-//                                                                                .CsType
-//                                                                                .OriginalType
-//                                                                           &&
-//                                                                           x.IsAssignableFrom(y.CsType
-//                                                                                               .OriginalType)));
-//            return defaultCoder.Rewrite(children).ToArray();
-//        }
-
         private static string[] DirectoryToPath(string directory)
         {
             return string.IsNullOrEmpty(directory) || directory == "."
@@ -235,7 +205,7 @@ namespace LazyCoder
 
             private void Add(Export export)
             {
-                if (!exports.ContainsKey(export.CsType))
+                if (export.CsType != null && !exports.ContainsKey(export.CsType))
                 {
                     exports.Add(export.CsType, export);
                 }
@@ -246,12 +216,6 @@ namespace LazyCoder
         {
             public Export(TsDeclaration tsDeclaration, TsFile tsFile)
             {
-                if (tsDeclaration.CsType == null)
-                {
-                    throw new
-                        Exception($"Can not create export for {tsDeclaration.Name} with unknown CsType");
-                }
-
                 CsType = tsDeclaration.CsType;
                 Name = tsDeclaration.Name;
                 TsFile = tsFile;
