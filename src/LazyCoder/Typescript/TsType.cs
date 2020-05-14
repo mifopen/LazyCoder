@@ -19,10 +19,10 @@ namespace LazyCoder.Typescript
             if (value.Type.OriginalType.IsEnum)
             {
                 return new TsEnumLiteralType
-                {
-                    Value = Enum.GetName(value.Type.OriginalType, value.Value),
-                    EnumType = new TsTypeReference(value.Type.Name) { CsType = value.Type }
-                };
+                       {
+                           Value = Enum.GetName(value.Type.OriginalType, value.Value),
+                           EnumType = new TsTypeReference(value.Type.Name) { CsType = value.Type }
+                       };
             }
 
             if (value.Type.OriginalType == typeof(bool))
@@ -96,9 +96,9 @@ namespace LazyCoder.Typescript
             if (type == typeof(NameValueCollection))
             {
                 return new TsObjectType
-                {
-                    Members = new[] { TsIndexSignature.ByString(TsPredefinedType.String()) }
-                };
+                       {
+                           Members = new[] { TsIndexSignature.ByString(TsPredefinedType.String()) }
+                       };
             }
 
             foreach (var customTypeConverter in customTypeConverters)
