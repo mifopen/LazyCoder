@@ -14,10 +14,41 @@ namespace LazyCoder.Typescript
             return From(csType.OriginalType, forceNullable);
         }
 
+        public static TsType FromLiteral(CsLiteral value)
+        {
+            if (value.Type.OriginalType.IsEnum)
+            {
+                return new TsEnumLiteralType
+                {
+                    Value = Enum.GetName(value.Type.OriginalType, value.Value),
+                    EnumType = new TsTypeReference(value.Type.Name) { CsType = value.Type }
+                };
+            }
+
+            if (value.Type.OriginalType == typeof(bool))
+            {
+                return new TsBoolLiteralType { Bool = (bool)value.Value };
+            }
+
+            if (value.Type.OriginalType == typeof(string))
+            {
+                return new TsStringLiteralType { String = (string)value.Value };
+            }
+
+            if (value.Type.OriginalType == typeof(int))
+            {
+                return new TsIntLiteralType { Int = (int)value.Value };
+            }
+
+            throw new ArgumentException("Not supported literal type " +
+                                        value.Type.OriginalType.Name);
+        }
+
         private static readonly List<ICustomTypeConverter> customTypeConverters =
             new List<ICustomTypeConverter>();
 
-        internal static void RegisterCustomTypeConverters(IEnumerable<ICustomTypeConverter> converters)
+        internal static void RegisterCustomTypeConverters(
+            IEnumerable<ICustomTypeConverter> converters)
         {
             customTypeConverters.AddRange(converters);
         }
@@ -65,9 +96,9 @@ namespace LazyCoder.Typescript
             if (type == typeof(NameValueCollection))
             {
                 return new TsObjectType
-                       {
-                           Members = new[] { TsIndexSignature.ByString(TsPredefinedType.String()) }
-                       };
+                {
+                    Members = new[] { TsIndexSignature.ByString(TsPredefinedType.String()) }
+                };
             }
 
             foreach (var customTypeConverter in customTypeConverters)
