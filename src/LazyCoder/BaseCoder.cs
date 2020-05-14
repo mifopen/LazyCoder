@@ -67,6 +67,17 @@ namespace LazyCoder
 
         protected virtual TsInterface Rewrite(CsClass csClass)
         {
+            var properties = csClass.Members
+                .Where(x => !x.IsStatic)
+                .OfType<CsProperty>()
+                .Select(Rewrite)
+                .ToArray();
+
+            var fields = csClass.Members
+                .OfType<CsField>()
+                .Select(Rewrite)
+                .ToArray();
+
             return new TsInterface
                    {
                        CsType = csClass.CsType,
@@ -80,11 +91,7 @@ namespace LazyCoder
                                         TsType.From(new CsType(csClass.CsType.OriginalType
                                                                       .BaseType))
                                     },
-                       Properties = csClass.Members
-                                           .Where(x => !x.IsStatic)
-                                           .OfType<CsProperty>()
-                                           .Select(Rewrite)
-                                           .ToArray()
+                       Properties = properties.Concat(fields).ToArray()
                    };
         }
 
@@ -120,7 +127,7 @@ namespace LazyCoder
                    };
         }
 
-        protected virtual TsTypeMember Rewrite(CsTypeMember csTypeMember)
+        protected virtual TsTypeMember? Rewrite(CsTypeMember csTypeMember)
         {
             switch (csTypeMember)
             {
@@ -133,6 +140,15 @@ namespace LazyCoder
                                Type = TsType.From(csProperty.Type,
                                                   forceNullable)
                            };
+                case CsField csField:
+                    if (csField.Value == null)
+                        return null;
+
+                    return new TsPropertySignature
+                    {
+                        Name = csField.Name,
+                        Type = TsType.FromLiteral(csField.Value)
+                    };
                 default:
                     throw new ArgumentOutOfRangeException(nameof(csTypeMember),
                                                           csTypeMember.GetType().Name, null);

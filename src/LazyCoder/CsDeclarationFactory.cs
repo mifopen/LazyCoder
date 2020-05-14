@@ -45,7 +45,9 @@ namespace LazyCoder
                                                       .ToArray()
                                                 : Array.Empty<string>(),
                            Members = type.GetDefinition()
-                                         .GetMembers(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+                                         .GetMembers(BindingFlags.Public | BindingFlags.Instance |
+                                                     BindingFlags.DeclaredOnly |
+                                                     BindingFlags.Static)
                                          .Where(m => !typeof(object)
                                                       .GetMembers()
                                                       .Select(me => me.Name)
@@ -67,7 +69,8 @@ namespace LazyCoder
                                                       .ToArray()
                                                 : Array.Empty<string>(),
                            Members = type.GetDefinition()
-                                         .GetMembers(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+                                         .GetMembers(BindingFlags.Public | BindingFlags.Instance |
+                                                     BindingFlags.DeclaredOnly)
                                          .Where(m => !typeof(object)
                                                       .GetMembers()
                                                       .Select(me => me.Name)
@@ -112,14 +115,59 @@ namespace LazyCoder
                     return Create(methodInfo);
                 case PropertyInfo propertyInfo:
                     return Create(propertyInfo);
+                case FieldInfo fieldInfo:
+                    return Create(fieldInfo);
                 case TypeInfo _:
-                case FieldInfo _:
                 case EventInfo _:
                     return null;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(memberInfo),
                                                           memberInfo.GetType().Name, null);
             }
+        }
+
+        private static CsTypeMember Create(FieldInfo fieldInfo)
+        {
+            CsLiteral? GetLiteral(Type fieldType)
+            {
+                if (!fieldInfo.IsLiteral)
+                {
+                    return null;
+                }
+
+                var constantValue = fieldInfo.GetRawConstantValue();
+
+                if (fieldType == typeof(string)
+                    || fieldType == typeof(int)
+                    || fieldType == typeof(bool)
+                    || fieldType.IsEnum)
+
+                {
+                    return new CsLiteral { Value = constantValue, Type = new CsType(fieldType) };
+                }
+
+                return null;
+            }
+
+            return new CsField
+                   {
+                       Name = fieldInfo.Name,
+                       IsStatic = fieldInfo.IsStatic,
+                       IsInherited = fieldInfo.DeclaringType != fieldInfo.ReflectedType,
+                       AccessModifier = GetAccessModifier(fieldInfo.IsPrivate,
+                                                          fieldInfo.IsFamily,
+                                                          fieldInfo.IsPublic,
+                                                          fieldInfo.IsAssembly),
+                       Attributes = fieldInfo.CustomAttributes
+                                             .Select(x => new CsAttribute
+                                                          {
+                                                              Name = x.AttributeType.Name,
+                                                              OriginalType = x.AttributeType
+                                                          })
+                                             .ToArray(),
+                       Type = new CsType(fieldInfo.FieldType),
+                       Value = GetLiteral(fieldInfo.FieldType)
+                   };
         }
 
         private static CsMethod Create(MethodInfo methodInfo)

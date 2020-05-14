@@ -60,9 +60,13 @@ namespace LazyCoder
                     return tsTypeReference.TypeArguments
                                           .SelectMany(Unwrap)
                                           .Append(tsTypeReference);
+                case TsEnumLiteralType tsEnumLiteralType:
+                    return new[] { tsEnumLiteralType.EnumType };
                 case TsNull _:
                 case TsPredefinedType _:
                 case TsStringLiteralType _:
+                case TsBoolLiteralType _:
+                case TsIntLiteralType _:
                     return new[]
                            {
                                tsType
