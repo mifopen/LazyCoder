@@ -2,11 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp2.2</TargetFramework>
-
         <IsPackable>false</IsPackable>
-
         <LangVersion>8</LangVersion>
-
         <Nullable>enable</Nullable>
     </PropertyGroup>
 

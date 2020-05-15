@@ -69,14 +69,7 @@ namespace LazyCoder
             this IEnumerable<TSource> source,
             Func<TSource, TKey> keySelector)
         {
-            var knownKeys = new HashSet<TKey>((IEqualityComparer<TKey>)null);
-            foreach (var item in source)
-            {
-                if (knownKeys.Add(keySelector(item)))
-                {
-                    yield return item;
-                }
-            }
+            return source.Distinct(new ByKeyEqualityComparer<TSource, TKey>(keySelector));
         }
 
         public static string GetDirectory(CsDeclaration csDeclaration)
@@ -117,6 +110,27 @@ namespace LazyCoder
                    || type == typeof(float)
                    || type == typeof(double)
                    || type == typeof(decimal);
+        }
+
+        private class ByKeyEqualityComparer<T, TKey>: IEqualityComparer<T>
+        {
+            private readonly Func<T, TKey> getter;
+
+            public ByKeyEqualityComparer(Func<T, TKey> getter)
+            {
+                this.getter = getter;
+            }
+
+            public bool Equals(T x, T y)
+            {
+                return EqualityComparer<TKey>.Default.Equals(getter(x),
+                                                             getter(y));
+            }
+
+            public int GetHashCode(T obj)
+            {
+                return EqualityComparer<TKey>.Default.GetHashCode(getter(obj));
+            }
         }
     }
 }

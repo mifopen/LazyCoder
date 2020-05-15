@@ -17,6 +17,9 @@ namespace LazyCoder
                    .Select(x => x.CsType)
                    .Where(x => x != null)
                    .Where(x => !x.OriginalType.IsGenericParameter)
+                   .DistinctBy(x => x.OriginalType.IsGenericType
+                                        ? x.OriginalType.GetGenericTypeDefinition()
+                                        : x.OriginalType)
                    .ToArray();
         }
 

@@ -139,7 +139,6 @@ namespace LazyCoder
         {
             return tsFile.Declarations
                          .SelectMany(DependencyFinder.Find)
-                         .Distinct()
                          .ToArray();
         }
 
