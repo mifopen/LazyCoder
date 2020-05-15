@@ -62,6 +62,14 @@ namespace LazyCoder.Typescript
                                        new TsNull());
             }
 
+            foreach (var customTypeConverter in customTypeConverters)
+            {
+                if (customTypeConverter.TryConvert(type, out var tsType))
+                {
+                    return tsType;
+                }
+            }
+
             if (Helpers.IsEnumerable(type))
             {
                 return new TsArrayType { ElementType = From(Helpers.UnwrapEnumerableType(type)) };
@@ -99,14 +107,6 @@ namespace LazyCoder.Typescript
                        {
                            Members = new[] { TsIndexSignature.ByString(TsPredefinedType.String()) }
                        };
-            }
-
-            foreach (var customTypeConverter in customTypeConverters)
-            {
-                if (customTypeConverter.TryConvert(type, out var tsType))
-                {
-                    return tsType;
-                }
             }
 
             return FromInternal(type);
