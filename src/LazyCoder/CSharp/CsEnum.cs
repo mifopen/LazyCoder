@@ -1,10 +1,15 @@
 using System;
+using Microsoft.CodeAnalysis;
 
 namespace LazyCoder.CSharp
 {
-    public class CsEnum: CsDeclaration
+    public class CsEnum: CsBaseTypeDeclaration
     {
         public CsEnum(Type type): base(type)
+        {
+        }
+
+        public CsEnum(ITypeSymbol typeSymbol): base(typeSymbol)
         {
         }
 
