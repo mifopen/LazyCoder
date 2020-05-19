@@ -2,7 +2,7 @@ using System;
 
 namespace LazyCoder.CSharp
 {
-    public abstract class CsTypeMember
+    public abstract class CsMember
     {
         public string Name { get; set; }
         public bool IsStatic { get; set; }

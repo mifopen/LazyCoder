@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace LazyCoder.CSharp
 {
-    public class CsMethod: CsTypeMember
+    public class CsMethod: CsMember
     {
         public CsType ReturnType { get; set; }
         public CsMethodParameter[] Parameters { get; set; } = Array.Empty<CsMethodParameter>();
