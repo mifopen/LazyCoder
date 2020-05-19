@@ -24,7 +24,7 @@ namespace LazyCoder.CSharp
         {
             Name = type.Name;
             Namespace = type.ContainingNamespace.Name;
-            CsType = new CsType(type);
+            // CsType = new CsType(type);
             // Attributes = type.CustomAttributes
             //                  .Select(x => new CsAttribute
             //                               {
