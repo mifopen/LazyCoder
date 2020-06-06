@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using LazyCoder.CSharp;
+using TypeInfo = System.Reflection.TypeInfo;
 
 namespace LazyCoder
 {

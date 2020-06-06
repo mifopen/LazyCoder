@@ -24,14 +24,14 @@ namespace LazyCoder.CSharp
         {
             Name = type.Name;
             Namespace = type.ContainingNamespace.Name;
-            // CsType = new CsType(type);
-            // Attributes = type.CustomAttributes
-            //                  .Select(x => new CsAttribute
-            //                               {
-            //                                   Name = x.AttributeType.Name,
-            //                                   OriginalType = x.AttributeType
-            //                               })
-            //                  .ToArray();
+            CsType = new CsType(type);
+            Attributes = type.GetAttributes()
+                             .Select(x => new CsAttribute
+                                          {
+                                              Name = x.AttributeClass.Name,
+                                              TypeSymbol = x.AttributeClass
+                                          })
+                             .ToArray();
         }
 
         public string Name { get; }

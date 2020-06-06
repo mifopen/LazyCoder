@@ -1,4 +1,5 @@
 using System;
+using Microsoft.CodeAnalysis;
 
 namespace LazyCoder.CSharp
 {
@@ -6,5 +7,6 @@ namespace LazyCoder.CSharp
     {
         public string Name { get; set; }
         public Type OriginalType { get; set; }
+        public ITypeSymbol TypeSymbol { get; set; }
     }
 }

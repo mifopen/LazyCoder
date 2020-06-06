@@ -1,4 +1,5 @@
 using System;
+using Microsoft.CodeAnalysis;
 
 namespace LazyCoder.CSharp
 {
@@ -6,6 +7,11 @@ namespace LazyCoder.CSharp
     {
         protected CsTypeDeclaration(Type type)
             : base(type)
+        {
+        }
+
+        protected CsTypeDeclaration(ITypeSymbol typeSymbol)
+            : base(typeSymbol)
         {
         }
 

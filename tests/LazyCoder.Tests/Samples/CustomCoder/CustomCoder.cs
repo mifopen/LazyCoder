@@ -7,15 +7,21 @@ using LazyCoder.Typescript;
 using Shouldly;
 using Xunit;
 
-namespace LazyCoder.Tests.Samples.Simple
+namespace LazyCoder.Tests.Samples.CustomCoder
 {
-    public class Simple
+    public class CustomCoder
     {
         [Fact]
         public void Test()
         {
-            var tsFiles = Converter.Convert(new[] { typeof(FirstClass) },
-                                            new[] { new Coder() });
+            var tsFiles = Converter.Convert(new[]
+                                            {
+                                                typeof(FirstClass)
+                                            },
+                                            new[]
+                                            {
+                                                new Coder()
+                                            });
             tsFiles.Length.ShouldBe(2);
 
             var firstClassFile = tsFiles.Single(x => x.Name == "FirstClass");

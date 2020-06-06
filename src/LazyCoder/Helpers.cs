@@ -74,6 +74,14 @@ namespace LazyCoder
 
         public static string GetDirectory(CsDeclaration csDeclaration)
         {
+            if (csDeclaration.CsType.TypeSymbol != null)
+            {
+                var strings = csDeclaration.CsType.TypeSymbol.ToDisplayString()
+                                           .Replace("+", ".")
+                                           .Split('.');
+                return Path.Combine(strings.Take(strings.Length - 1).ToArray());
+            }
+
             var type = csDeclaration.CsType.OriginalType;
             var parts = GetFullName(type).Replace("+", ".").Split('.');
             return Path.Combine(parts.Take(parts.Length - 1).ToArray());
