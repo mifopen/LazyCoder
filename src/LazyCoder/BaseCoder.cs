@@ -127,7 +127,7 @@ namespace LazyCoder
                    };
         }
 
-        protected virtual TsTypeMember? Rewrite(CsTypeMember csTypeMember)
+        protected virtual TsTypeMember? Rewrite(CsMember csTypeMember)
         {
             switch (csTypeMember)
             {

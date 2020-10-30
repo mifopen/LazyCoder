@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Microsoft.CodeAnalysis;
 
 namespace LazyCoder.CSharp
 {
@@ -15,6 +16,20 @@ namespace LazyCoder.CSharp
                                           {
                                               Name = x.AttributeType.Name,
                                               OriginalType = x.AttributeType
+                                          })
+                             .ToArray();
+        }
+
+        protected CsDeclaration(ITypeSymbol type)
+        {
+            Name = type.Name;
+            Namespace = type.ContainingNamespace.Name;
+            CsType = new CsType(type);
+            Attributes = type.GetAttributes()
+                             .Select(x => new CsAttribute
+                                          {
+                                              Name = x.AttributeClass.Name,
+                                              TypeSymbol = x.AttributeClass
                                           })
                              .ToArray();
         }

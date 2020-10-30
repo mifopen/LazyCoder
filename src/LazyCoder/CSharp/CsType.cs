@@ -1,4 +1,5 @@
 using System;
+using Microsoft.CodeAnalysis;
 
 namespace LazyCoder.CSharp
 {
@@ -11,9 +12,17 @@ namespace LazyCoder.CSharp
             OriginalType = originalType;
         }
 
+        public CsType(ITypeSymbol typeSymbol)
+        {
+            Name = typeSymbol.Name;
+            Namespace = typeSymbol.ContainingNamespace.Name;
+            TypeSymbol = typeSymbol;
+        }
+
         public string Name { get; }
         public string Namespace { get; }
         public Type OriginalType { get; }
+        public ITypeSymbol TypeSymbol { get; }
 
         public override string ToString()
         {
@@ -30,6 +39,11 @@ namespace LazyCoder.CSharp
             if (ReferenceEquals(this, other))
             {
                 return true;
+            }
+
+            if (TypeSymbol != null)
+            {
+                return TypeSymbol.Equals(other.TypeSymbol);
             }
 
             return OriginalType == other.OriginalType;
@@ -57,6 +71,11 @@ namespace LazyCoder.CSharp
 
         public override int GetHashCode()
         {
+            if (TypeSymbol != null)
+            {
+                return TypeSymbol.GetHashCode();
+            }
+
             return OriginalType.GetHashCode();
         }
 

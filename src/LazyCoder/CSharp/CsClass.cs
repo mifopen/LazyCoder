@@ -1,15 +1,17 @@
 using System;
-using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
 
 namespace LazyCoder.CSharp
 {
-    public class CsClass: CsDeclaration
+    public class CsClass: CsTypeDeclaration
     {
         public CsClass(Type type): base(type)
         {
         }
 
-        public CsTypeMember[] Members { get; set; } = Array.Empty<CsTypeMember>();
-        public string[] TypeParameters { get; set; } = Array.Empty<string>();
+        public CsClass(ITypeSymbol typeSymbol)
+            : base(typeSymbol)
+        {
+        }
     }
 }

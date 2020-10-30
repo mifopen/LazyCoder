@@ -1,6 +1,6 @@
 namespace LazyCoder.CSharp
 {
-    public class CsProperty: CsTypeMember
+    public class CsProperty: CsMember
     {
         public CsType Type { get; set; }
     }

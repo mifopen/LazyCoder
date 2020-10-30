@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using LazyCoder.CSharp;
+using TypeInfo = System.Reflection.TypeInfo;
 
 namespace LazyCoder
 {
@@ -107,7 +108,7 @@ namespace LazyCoder
             return null;
         }
 
-        private static CsTypeMember Create(MemberInfo memberInfo)
+        private static CsMember Create(MemberInfo memberInfo)
         {
             switch (memberInfo)
             {
@@ -126,7 +127,7 @@ namespace LazyCoder
             }
         }
 
-        private static CsTypeMember Create(FieldInfo fieldInfo)
+        private static CsMember Create(FieldInfo fieldInfo)
         {
             CsLiteral? GetLiteral(Type fieldType)
             {

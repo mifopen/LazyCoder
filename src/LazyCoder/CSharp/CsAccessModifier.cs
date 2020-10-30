@@ -5,6 +5,8 @@ namespace LazyCoder.CSharp
         Public,
         Private,
         Protected,
-        Internal
+        Internal,
+        ProtectedAndInternal,
+        ProtectedOrInternal
     }
 }
