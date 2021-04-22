@@ -66,12 +66,14 @@ namespace LazyCoder.Writers
         private void Write(IKeyboard keyboard,
                            TsUnionType tsUnionType)
         {
+            keyboard.Type("(");
             for (var i = 0; i < tsUnionType.Types.Length; i++)
             {
                 Write(keyboard, tsUnionType.Types[i]);
                 if (i != tsUnionType.Types.Length - 1)
                     keyboard.Type(" | ");
             }
+            keyboard.Type(")");
         }
 
         private void Write(IKeyboard keyboard,
