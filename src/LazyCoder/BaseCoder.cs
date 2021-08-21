@@ -78,19 +78,21 @@ namespace LazyCoder
                 .Select(Rewrite)
                 .ToArray();
 
+            var baseTypes = new List<Type>();
+            if (csClass.CsType.OriginalType.BaseType != typeof(object))
+            {
+                baseTypes.Add(csClass.CsType.OriginalType.BaseType);
+            }
+
+            baseTypes.AddRange(GetInterfaces(csClass.CsType.OriginalType, false));
+
             return new TsInterface
                    {
                        CsType = csClass.CsType,
                        Name = csClass.Name,
                        ExportKind = TsExportKind.Named,
                        TypeParameters = csClass.TypeParameters,
-                       Base = csClass.CsType.OriginalType.BaseType == typeof(object)
-                                  ? Array.Empty<TsType>()
-                                  : new[]
-                                    {
-                                        TsType.From(new CsType(csClass.CsType.OriginalType
-                                                                      .BaseType))
-                                    },
+                       Base = baseTypes.Select(x=> TsType.From(new CsType(x))).ToArray(),
                        Properties = properties.Concat(fields).ToArray()
                    };
         }
@@ -103,6 +105,9 @@ namespace LazyCoder
                        Name = csInterface.Name,
                        ExportKind = TsExportKind.Named,
                        TypeParameters = csInterface.TypeParameters,
+                       Base = GetInterfaces(csInterface.CsType.OriginalType, false)
+                           .Select(x=> TsType.From(new CsType(x)))
+                           .ToArray(),
                        Properties = csInterface.Members
                                                .Where(x => !x.IsStatic)
                                                .OfType<CsProperty>()
@@ -113,18 +118,37 @@ namespace LazyCoder
 
         protected virtual TsInterface Rewrite(CsStruct csStruct)
         {
+            var baseTypes = new List<Type>();
+            if (csStruct.CsType.OriginalType.BaseType != typeof(object))
+            {
+                baseTypes.Add(csStruct.CsType.OriginalType.BaseType);
+            }
+
+            baseTypes.AddRange(GetInterfaces(csStruct.CsType.OriginalType, false));
+
             return new TsInterface
                    {
                        CsType = csStruct.CsType,
                        Name = csStruct.Name,
                        ExportKind = TsExportKind.Named,
                        TypeParameters = csStruct.TypeParameters,
+                       Base = baseTypes.Select(x=> TsType.From(new CsType(x))).ToArray(),
                        Properties = csStruct.Members
                                             .Where(x => !x.IsStatic)
                                             .OfType<CsProperty>()
                                             .Select(Rewrite)
                                             .ToArray()
                    };
+        }
+
+        private static IEnumerable<Type> GetInterfaces(Type type, bool includeInherited)
+        {
+            if (includeInherited || type.BaseType == null)
+            {
+                return type.GetInterfaces();
+            }
+
+            return type.GetInterfaces().Except(type.BaseType.GetInterfaces());
         }
 
         protected virtual TsTypeMember? Rewrite(CsTypeMember csTypeMember)
