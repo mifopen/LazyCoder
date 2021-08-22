@@ -2,9 +2,11 @@ using System.Linq;
 using Nuke.Common;
 using Nuke.Common.Execution;
 using Nuke.Common.Git;
+using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
+using Nuke.Common.Tools.GitHub;
 using Nuke.Common.Tools.GitVersion;
 using Nuke.Common.Utilities.Collections;
 using static Nuke.Common.IO.FileSystemTasks;
@@ -17,10 +19,7 @@ class Build: NukeBuild
     public static int Main() => Execute<Build>(x => x.Compile);
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
-    readonly Configuration Configuration =
-        IsLocalBuild
-            ? Configuration.Debug
-            : Configuration.Release;
+    readonly string Configuration = IsLocalBuild ? "Debug" : "Release";
 
     [Parameter("NuGet api key")] readonly string ApiKey;
     readonly string LicenseFile = RootDirectory / "LICENSE";
@@ -65,10 +64,8 @@ class Build: NukeBuild
                               DotNetBuild(s => s
                                                .SetProjectFile(Solution)
                                                .SetConfiguration(Configuration)
-                                               .SetAssemblyVersion(GitVersion
-                                                                       .GetNormalizedAssemblyVersion())
-                                               .SetFileVersion(GitVersion
-                                                                   .GetNormalizedFileVersion())
+                                               .SetAssemblyVersion(GitVersion.AssemblySemVer)
+                                               .SetFileVersion(GitVersion.AssemblySemFileVer)
                                                .SetInformationalVersion(GitVersion
                                                                             .InformationalVersion)
                                                .EnableNoRestore());
@@ -101,7 +98,7 @@ class Build: NukeBuild
         => _ => _
                 .DependsOn(Pack)
                 .Requires(() => ApiKey)
-                .Requires(() => Equals(Configuration, Configuration.Release))
+                .Requires(() => Equals(Configuration, "Release"))
                 .Executes(() =>
                           {
                               GlobFiles(ArtifactsDirectory, "*.nupkg")
