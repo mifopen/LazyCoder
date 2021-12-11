@@ -7,7 +7,6 @@ namespace LazyCoder.CSharp
         public string Name { get; set; }
         public bool IsStatic { get; set; }
         public bool IsInherited { get; set; }
-        public bool IsNullable { get; set; }
         public CsAccessModifier AccessModifier { get; set; }
         public CsAttribute[] Attributes { get; set; } = Array.Empty<CsAttribute>();
     }

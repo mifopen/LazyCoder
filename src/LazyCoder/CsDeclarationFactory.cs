@@ -168,8 +168,7 @@ namespace LazyCoder
                                                           })
                                              .ToArray(),
                        Type = new CsType(fieldInfo.FieldType),
-                       Value = GetLiteral(fieldInfo.FieldType),
-                       IsNullable = info.ReadState == NullabilityState.Nullable
+                       Value = GetLiteral(fieldInfo.FieldType)
                    };
         }
 
