@@ -149,6 +149,8 @@ namespace LazyCoder
                 return null;
             }
 
+            var context = new NullabilityInfoContext();
+            var info = context.Create(fieldInfo);
             return new CsField
                    {
                        Name = fieldInfo.Name,
@@ -166,7 +168,8 @@ namespace LazyCoder
                                                           })
                                              .ToArray(),
                        Type = new CsType(fieldInfo.FieldType),
-                       Value = GetLiteral(fieldInfo.FieldType)
+                       Value = GetLiteral(fieldInfo.FieldType),
+                       IsNullable = info.ReadState == NullabilityState.Nullable
                    };
         }
 
@@ -213,6 +216,8 @@ namespace LazyCoder
                 return null;
             }
 
+            var context = new NullabilityInfoContext();
+            var info = context.Create(propertyInfo);
             return new CsProperty
                    {
                        Name = propertyInfo.Name,
@@ -229,7 +234,8 @@ namespace LazyCoder
                                                                  OriginalType = x.AttributeType
                                                              })
                                                 .ToArray(),
-                       Type = new CsType(propertyInfo.PropertyType)
+                       Type = new CsType(propertyInfo.PropertyType),
+                       IsNullable = info.ReadState == NullabilityState.Nullable
                    };
         }
 

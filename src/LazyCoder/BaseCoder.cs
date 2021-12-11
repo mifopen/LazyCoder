@@ -156,8 +156,8 @@ namespace LazyCoder
             switch (csTypeMember)
             {
                 case CsProperty csProperty:
-                    var forceNullable = csProperty.Attributes
-                                                  .Any(a => a.Name.Contains("CanBeNull"));
+                    var forceNullable = csProperty.Attributes.Any(a => a.Name.Contains("CanBeNull"))
+                                        || csProperty.IsNullable;
                     return new TsPropertySignature
                            {
                                Name = csProperty.Name,
