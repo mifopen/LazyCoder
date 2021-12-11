@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -69,7 +68,7 @@ namespace LazyCoder.Tests.Samples.Simple
                               .Select(p => new TsPropertySignature
                                            {
                                                Name = p.Name,
-                                               Type = TsType.From(p.Type),
+                                               Type = TsType.From(p.Type, p.IsNullable),
                                                Optional = false
                                            })
                               .ToArray();
@@ -79,6 +78,7 @@ namespace LazyCoder.Tests.Samples.Simple
         private class FirstClass
         {
             public string StringProperty { get; set; }
+            public string? StringNullableProperty { get; set; }
             public SecondClass SecondClassProperty { get; set; }
         }
 

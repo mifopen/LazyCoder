@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.Contracts;
-using System.Linq;
+﻿using System.Linq;
 using Shouldly;
 using Xunit;
 
